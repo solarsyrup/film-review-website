@@ -1,11 +1,35 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
-export async function getStaticPaths() { const reviews = await getCollection("reviews"); return reviews.map((review) => ({ params: { slug: review.slug }, props: { review } })); }
+
+export async function getStaticPaths() {
+  const reviews = await getCollection("reviews");
+  return reviews.map((review) => ({
+    params: { slug: review.data.slug || review.id },
+    props: { review },
+  }));
+}
+
 const { review } = Astro.props;
 const { Content } = await render(review);
 const dateLabel = review.data.date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
 ---
+
 <BaseLayout title={review.data.title} description={review.data.summary ?? `A review of ${review.data.title}.`}>
-  <article class="shell"><div class="article-head"><a class="back-link" href="/">← Back to journal</a><div class="eyebrow" style="margin-top:34px">Film review</div><h1>{review.data.title}</h1><div class="review-meta">{review.data.year} · Directed by {review.data.director} · Reviewed {dateLabel}</div><div class="rating" style="margin-top:18px">{"★".repeat(Math.floor(review.data.rating))}{review.data.rating % 1 ? "½" : ""}<span class="muted"> / 5</span></div>{review.data.summary && <p class="article-summary">{review.data.summary}</p>}</div><hr class="rule" style="margin-top:0" /><div class="article-body"><Content /></div><hr class="rule" /><a class="back-link" href="/">← More writing</a></article>
+  <article class="shell">
+    <div class="article-head">
+      <a class="back-link" href="/">← Back to journal</a>
+      <div class="eyebrow" style="margin-top:34px">Film review</div>
+      <h1>{review.data.title}</h1>
+      <div class="review-meta">{review.data.year} · Directed by {review.data.director} · Reviewed {dateLabel}</div>
+      <div class="rating" style="margin-top:18px">{"★".repeat(Math.floor(review.data.rating))}{review.data.rating % 1 ? "½" : ""}<span class="muted"> / 5</span></div>
+      {review.data.summary && <p class="article-summary">{review.data.summary}</p>}
+    </div>
+    <hr class="rule" style="margin-top:0" />
+    <div class="article-body">
+      <Content />
+    </div>
+    <hr class="rule" />
+    <a class="back-link" href="/">← More writing</a>
+  </article>
 </BaseLayout>
