@@ -12,15 +12,15 @@ const reviews = defineCollection({
   })
 });
 
-const pages = defineCollection({
-  type: "content",
+const pagesCollection = defineCollection({
+  loader: glob({ pattern: '**.md', base: './src/content/pages' }), // or type: 'content'
   schema: z.object({
-    slug: z.string(),
     title: z.string(),
+    slug: z.string().optional(), // <--- Change this to .optional()
     eyebrow: z.string().optional(),
-    headline: z.string(),
-    intro: z.string()
-  })
+    headline: z.string().optional(),
+    intro: z.string().optional(),
+  }),
 });
 
 export const collections = { reviews, pages };
