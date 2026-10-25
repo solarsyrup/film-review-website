@@ -1,9 +1,9 @@
 ---
-title: Clayface
-director: James Watkins
+title: "Clayface"
+director: "James Watkins"
 year: 2026
-slug: clayface-review
-date: 2026-10-24
+slug: "clayface-review"
+date: "2026-10-24"
 rating: 4
 ---
 Clayface was a watch indeed; my friend Nolan and I are a tad late to our theater  of choice,  but we arrive just in time and take our seats as the movie starts. The film enigmatically starts, and we are taken to Gotham for the first time since The Batman.    
