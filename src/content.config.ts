@@ -1,4 +1,4 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 const reviews = defineCollection({
@@ -13,15 +13,17 @@ const reviews = defineCollection({
   })
 });
 
-const pagesCollection = defineCollection({
-  loader: glob({ pattern: '**.md', base: './src/content/pages' }), // or type: 'content'
+const pages = defineCollection({
+  loader: glob({ pattern: '**.md', base: './src/content/pages' }),
   schema: z.object({
-    title: z.string(),
-    slug: z.string().optional(), // <--- Change this to .optional()
+    title: z.string().optional(),
+    slug: z.string().optional(),
     eyebrow: z.string().optional(),
     headline: z.string().optional(),
     intro: z.string().optional(),
   }),
 });
 
-export const collections = { reviews, pages };
+export const collections = { 
+  pages: pages // or simply { pages }
+};
