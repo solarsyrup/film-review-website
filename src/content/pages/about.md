@@ -10,6 +10,6 @@ My name is Chris, online I go by @solarsyrup. I am a student in Vermont who deci
 
 ![](/images/Untitled.jpeg)
 
-A not exactly flattering image of myself (second from the right) and co. at *Backrooms* (2026)
+**A not exactly flattering image of myself (second from the right) and co. at *Backrooms* (2026)**
 
 My intention with this website is to keep a journal separate from musings about my life; this is intended to detail my interactions with art and what humans before me have created. It includes my thoughts about and what I take away from what I see.
