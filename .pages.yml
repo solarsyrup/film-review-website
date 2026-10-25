@@ -40,3 +40,63 @@ content:
         label: Review Text
         type: rich-text
         description: "Write only your review here. The title, director, date and rating are displayed separately above it."
+
+  - name: homepage
+    label: Homepage
+    type: file
+    path: src/content/pages/home.md
+    format: yaml-frontmatter
+    fields:
+      - name: slug
+        label: Internal Page ID
+        type: string
+        readonly: true
+      - name: title
+        label: Browser Tab Title
+        type: string
+      - name: eyebrow
+        label: Small Heading
+        type: string
+      - name: headline
+        label: Main Heading
+        type: string
+      - name: intro
+        label: Introductory Text
+        type: text
+      - name: body
+        label: Extra Homepage Text
+        type: rich-text
+      - name: sectionHeading
+        label: Reviews Section Heading
+        type: string
+        description: "The heading above the reviews, normally Recent writing."
+      - name: closingNote
+        label: Closing Note
+        type: text
+        description: "The sentence below the reviews."
+
+  - name: about_page
+    label: About Page
+    type: file
+    path: src/content/pages/about.md
+    format: yaml-frontmatter
+    fields:
+      - name: slug
+        label: Internal Page ID
+        type: string
+        readonly: true
+      - name: title
+        label: Browser Tab Title
+        type: string
+      - name: eyebrow
+        label: Small Heading
+        type: string
+      - name: headline
+        label: Main Heading
+        type: string
+      - name: intro
+        label: Introductory Text
+        type: text
+      - name: body
+        label: Main About Text
+        type: rich-text
