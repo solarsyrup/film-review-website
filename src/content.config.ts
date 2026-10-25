@@ -8,7 +8,7 @@ const reviews = defineCollection({
     director: z.string().optional(),
     year: z.number().optional(),
     slug: z.string().optional(),
-    date: z.string().optional(),
+    date: z.coerce.date().optional(), // <--- z.coerce.date automatically parses "2026-10-24" strings into Date objects
     rating: z.number().optional(),
   }),
 });
