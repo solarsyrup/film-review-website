@@ -7,7 +7,7 @@ content:
     label: Reviews
     type: collection
     path: src/content/reviews
-    format: frontmatter
+    format: yaml-frontmatter
     filename: "{slug}.md"
     fields:
       - name: title
