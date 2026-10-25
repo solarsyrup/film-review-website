@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
 
 const reviews = (await getCollection("reviews"))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort((a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0));
 const pages = await getCollection("pages");
 const home = pages.find((page) => page.data.slug === "home");
 const homeContent = home ? await render(home) : null;
@@ -30,14 +30,14 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
           {reviews.map((review) => (
             <li class="review-row">
               <div>
-                <a href={`/reviews/${review.slug}/`}><h3>{review.data.title}</h3></a>
-                <div class="review-meta">{review.data.year} · Dir. {review.data.director} · {dateLabel(review.data.date)}</div>
+                <a href={`/reviews/${review.data.slug || review.id}/`}><h3>{review.data.title}</h3></a>
+                <div class="review-meta">{[review.data.year, review.data.director && `Dir. ${review.data.director}`, review.data.date && dateLabel(review.data.date)].filter(Boolean).join(" · ")}</div>
               </div>
-              <div class="rating" aria-label={`Rating ${review.data.rating} out of 5`}>
+              {review.data.rating != null && <div class="rating" aria-label={`Rating ${review.data.rating} out of 5`}>
                 {"★".repeat(Math.floor(review.data.rating))}{review.data.rating % 1 ? "½" : ""}<span class="muted"> / 5</span>
-              </div>
+              </div>}
               {review.data.summary && <p class="summary">{review.data.summary}</p>}
-              <div><a class="text-link review-meta" href={`/reviews/${review.slug}/`}>Read review ↗</a></div>
+              <div><a class="text-link review-meta" href={`/reviews/${review.data.slug || review.id}/`}>Read review ↗</a></div>
             </li>
           ))}
         </ul>
