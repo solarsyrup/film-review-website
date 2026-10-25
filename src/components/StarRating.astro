@@ -1,0 +1,48 @@
+---
+interface Props {
+  value: number;
+}
+
+const { value } = Astro.props;
+const fillPercent = Math.max(0, Math.min(100, (value / 5) * 100));
+---
+
+<span class="star-rating" role="img" aria-label={`Rated ${value} out of 5 stars`}>
+  <span class="star-track" aria-hidden="true">
+    <span class="unfilled">★★★★★</span>
+    <span class="filled" style={`width: ${fillPercent}%`}>★★★★★</span>
+  </span>
+  <span class="out-of-five" aria-hidden="true">/ 5</span>
+</span>
+
+<style>
+  .star-rating {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+  .star-track {
+    position: relative;
+    display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.03rem;
+    line-height: 1;
+    letter-spacing: 0.06em;
+  }
+  .unfilled {
+    color: var(--muted);
+    opacity: 0.45;
+  }
+  .filled {
+    position: absolute;
+    inset: 0 auto auto 0;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--accent);
+  }
+  .out-of-five {
+    color: var(--muted);
+  }
+</style>
