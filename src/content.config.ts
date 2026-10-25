@@ -1,5 +1,7 @@
-import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
+---
+import { getCollection } from 'astro:content';
+const reviews = await getCollection('reviews');
+---
 
 const reviews = defineCollection({
   loader: glob({ pattern: '**.md', base: './src/content/reviews' }),
