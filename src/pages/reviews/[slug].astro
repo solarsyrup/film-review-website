@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import StarRating from "../../components/StarRating.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -24,7 +25,7 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
       <div class="eyebrow" style="margin-top:34px">Film review</div>
       <h1>{review.data.title}</h1>
       <div class="review-meta">{[review.data.year, review.data.director && `Directed by ${review.data.director}`, dateLabel && `Reviewed ${dateLabel}`].filter(Boolean).join(" · ")}</div>
-      {review.data.rating != null && <div class="rating" style="margin-top:18px">{"★".repeat(Math.floor(review.data.rating))}{review.data.rating % 1 ? "½" : ""}<span class="muted"> / 5</span></div>}
+      {review.data.rating != null && <div class="rating" style="margin-top:18px"><StarRating value={review.data.rating} /></div>}
       {review.data.summary && <p class="article-summary">{review.data.summary}</p>}
     </div>
     <hr class="rule" style="margin-top:0" />
