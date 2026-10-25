@@ -2,15 +2,15 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 const reviews = defineCollection({
-  type: "content",
+  loader: glob({ pattern: '**.md', base: './src/content/reviews' }),
   schema: z.object({
     title: z.string(),
-    director: z.string(),
-    year: z.number(),
-    rating: z.number().min(0).max(5),
-    date: z.coerce.date(),
-    summary: z.string().optional()
-  })
+    director: z.string().optional(),
+    year: z.number().optional(),
+    slug: z.string().optional(),
+    date: z.string().optional(),
+    rating: z.number().optional(),
+  }),
 });
 
 const pages = defineCollection({
