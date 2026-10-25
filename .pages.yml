@@ -1,4 +1,3 @@
-
 media:
   input: public/images
   output: /images
@@ -8,8 +7,8 @@ content:
     label: Reviews
     type: collection
     path: src/content/reviews
-    format: yaml-frontmatter
-    filename: "{primary}.md"
+    format: frontmatter
+    filename: "{slug}.md"
     fields:
       - name: title
         label: Title
