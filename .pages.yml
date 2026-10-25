@@ -1,0 +1,30 @@
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: reviews
+    label: Reviews
+    type: collection
+    path: src/content/reviews
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: slug
+        label: Slug
+        type: string
+        required: true
+      - name: date
+        label: Publication Date
+        type: date
+      - name: rating
+        label: Rating
+        type: number
+      - name: body
+        label: Review
+        type: rich-text
