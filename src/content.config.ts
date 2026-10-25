@@ -22,6 +22,8 @@ const pages = defineCollection({
     eyebrow: z.string().optional(),
     headline: z.string().optional(),
     intro: z.string().optional(),
+    sectionHeading: z.string().optional(),
+    closingNote: z.string().optional(),
   }),
 });
 
