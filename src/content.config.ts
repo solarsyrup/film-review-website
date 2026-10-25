@@ -1,7 +1,5 @@
----
-import { getCollection } from 'astro:content';
-const reviews = await getCollection('reviews');
----
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 const reviews = defineCollection({
   loader: glob({ pattern: '**.md', base: './src/content/reviews' }),
@@ -26,6 +24,4 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { 
-  pages: pages // or simply { pages }
-};
+export const collections = { reviews, pages };
