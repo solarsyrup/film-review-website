@@ -1,8 +1,8 @@
 ---
-title: Clayface + my hosting journey
+title: Clayface
 director: James Watkins
 year: 2026
-slug: clayface review
+slug: clayface-review
 date: 2026-10-24
 rating: 4
 ---
