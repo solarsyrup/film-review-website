@@ -13,7 +13,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
   month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
 });
 ---
-<BaseLayout title="Journal" description={home?.data.intro ?? "A personal film journal of reviews and reflections."}>
+<BaseLayout title={home?.data.title ?? "Journal"} description={home?.data.intro ?? "A personal film journal of reviews and reflections."}>
   <div class="shell">
     <section class="hero">
       <div class="eyebrow">{home?.data.eyebrow ?? "Notes on cinema · An independent film journal"}</div>
@@ -23,7 +23,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
     </section>
     <section aria-labelledby="latest">
       <div class="section-heading">
-        <h2 id="latest">Recent writing</h2>
+        <h2 id="latest">{home?.data.sectionHeading ?? "Recent writing"}</h2>
         <span class="muted review-meta">{reviews.length} {reviews.length === 1 ? "review" : "reviews"}</span>
       </div>
       {reviews.length ? (
@@ -45,6 +45,6 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
       ) : <div class="empty">No reviews yet. Add your first one through Pages CMS and it will appear here.</div>}
     </section>
     <hr class="rule" />
-    <p class="muted">A living archive of things seen, felt, and thought.</p>
+    <p class="muted">{home?.data.closingNote ?? "A living archive of things seen, felt, and thought."}</p>
   </div>
 </BaseLayout>
