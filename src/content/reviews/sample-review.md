@@ -10,7 +10,6 @@ Clayface was a watch indeed; my friend Nolan and I are a tad late to our theater
 
 ### **heavy spoilers - read at own discretion**
 
-  
 The film is about actor Matt Hagen, an actor born and raised in the slums of Gotham, and rags-to-riches style claws his way to the top of the industry. The movie starts off with his nomination for what I assume is an Oscar. He then goes to a club to celebrate with his buddy Corey. Despite aforementioned Corey's warning, Matt dances with and eventually sleeps with Mia Torrez, the girlfriend of a prominent Mob boss, Markos Szabo.  
 
 The next morning, Szabo rudely awakens the two, and Mia leaves as Szabo and his men use a switchblade to defile the face of the rising star. Mia lies on a news interview and says she didn't seduce him; she supposedly talked to an egocentric Hagen who slipped a little something in her drink and slept with her. Then, stories come up from Hagen's old neighborhood in Gotham about other incidents in his past, and Hagen is shunned.  
