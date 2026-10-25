@@ -1,14 +1,49 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
-const reviews = (await getCollection("reviews")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const dateLabel = (date) => date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+import { getCollection, render } from "astro:content";
+
+const reviews = (await getCollection("reviews"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const pages = await getCollection("pages");
+const home = pages.find((page) => page.data.slug === "home");
+const homeContent = home ? await render(home) : null;
+const HomeContent = homeContent?.Content;
+const dateLabel = (date) => date.toLocaleDateString("en-US", {
+  month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
+});
 ---
-<BaseLayout title="Journal" description="Thoughtful, text-first film reviews and notes.">
+<BaseLayout title="Journal" description={home?.data.intro ?? "A personal film journal of reviews and reflections."}>
   <div class="shell">
-    <section class="hero"><div class="eyebrow">Notes on cinema · An independent film journal</div><h1>Films worth<br />thinking about.</h1><p>A personal journal of movies, images, and ideas that stay with you after the screen goes dark. No rankings for the sake of rankings — just considered writing about cinema.</p></section>
-    <section aria-labelledby="latest"><div class="section-heading"><h2 id="latest">Recent writing</h2><span class="muted review-meta">{reviews.length} {reviews.length === 1 ? "review" : "reviews"}</span></div>
-    {reviews.length ? <ul class="review-list">{reviews.map((review) => <li class="review-row"><div><a href={`/reviews/${review.slug}/`}><h3>{review.data.title}</h3></a><div class="review-meta">{review.data.year} · Dir. {review.data.director} · {dateLabel(review.data.date)}</div></div><div class="rating" aria-label={`Rating ${review.data.rating} out of 5`}>{"★".repeat(Math.floor(review.data.rating))}{review.data.rating % 1 ? "½" : ""}<span class="muted"> / 5</span></div>{review.data.summary && <p class="summary">{review.data.summary}</p>}<div><a class="text-link review-meta" href={`/reviews/${review.slug}/`}>Read review ↗</a></div></li>)}</ul> : <div class="empty">No reviews yet. Add your first one through Pages CMS and it will appear here.</div>}
-    </section><hr class="rule" /><p class="muted">A living archive of things seen, felt, and thought.</p>
+    <section class="hero">
+      <div class="eyebrow">{home?.data.eyebrow ?? "Notes on cinema · An independent film journal"}</div>
+      <h1>{home?.data.headline ?? "Films worth thinking about."}</h1>
+      <p>{home?.data.intro ?? "A personal journal of movies, images, and ideas that stay with you after the screen goes dark."}</p>
+      {HomeContent && <div class="page-copy"><HomeContent /></div>}
+    </section>
+    <section aria-labelledby="latest">
+      <div class="section-heading">
+        <h2 id="latest">Recent writing</h2>
+        <span class="muted review-meta">{reviews.length} {reviews.length === 1 ? "review" : "reviews"}</span>
+      </div>
+      {reviews.length ? (
+        <ul class="review-list">
+          {reviews.map((review) => (
+            <li class="review-row">
+              <div>
+                <a href={`/reviews/${review.slug}/`}><h3>{review.data.title}</h3></a>
+                <div class="review-meta">{review.data.year} · Dir. {review.data.director} · {dateLabel(review.data.date)}</div>
+              </div>
+              <div class="rating" aria-label={`Rating ${review.data.rating} out of 5`}>
+                {"★".repeat(Math.floor(review.data.rating))}{review.data.rating % 1 ? "½" : ""}<span class="muted"> / 5</span>
+              </div>
+              {review.data.summary && <p class="summary">{review.data.summary}</p>}
+              <div><a class="text-link review-meta" href={`/reviews/${review.slug}/`}>Read review ↗</a></div>
+            </li>
+          ))}
+        </ul>
+      ) : <div class="empty">No reviews yet. Add your first one through Pages CMS and it will appear here.</div>}
+    </section>
+    <hr class="rule" />
+    <p class="muted">A living archive of things seen, felt, and thought.</p>
   </div>
 </BaseLayout>

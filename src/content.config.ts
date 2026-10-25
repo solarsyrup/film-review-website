@@ -1,4 +1,5 @@
 import { defineCollection, z } from "astro:content";
+
 const reviews = defineCollection({
   type: "content",
   schema: z.object({
@@ -10,4 +11,16 @@ const reviews = defineCollection({
     summary: z.string().optional()
   })
 });
-export const collections = { reviews };
+
+const pages = defineCollection({
+  type: "content",
+  schema: z.object({
+    slug: z.string(),
+    title: z.string(),
+    eyebrow: z.string().optional(),
+    headline: z.string(),
+    intro: z.string()
+  })
+});
+
+export const collections = { reviews, pages };

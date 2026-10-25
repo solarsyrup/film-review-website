@@ -1,4 +1,20 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+const pages = await getCollection("pages");
+const about = pages.find((page) => page.data.slug === "about");
+const aboutContent = about ? await render(about) : null;
+const AboutContent = aboutContent?.Content;
 ---
-<BaseLayout title="About" description="About After the Credits, a personal film journal."><article class="shell"><section class="hero"><div class="eyebrow">A note from the editor</div><h1>About this<br />journal.</h1><p>This is a place for writing about films with patience and curiosity — how they look, what they say, and what lingers when they end.</p><p>Reviews here are personal responses, not definitive verdicts. The goal is to pay attention.</p><p class="muted">More to come.</p></section></article></BaseLayout>
+<BaseLayout title={about?.data.title ?? "About"} description={about?.data.intro ?? "About After the Credits, a personal film journal."}>
+  <article class="shell">
+    <section class="hero">
+      <div class="eyebrow">{about?.data.eyebrow ?? "A note from the editor"}</div>
+      <h1>{about?.data.headline ?? "About this journal."}</h1>
+      <p>{about?.data.intro ?? "A personal place to write about films with patience and curiosity."}</p>
+    </section>
+    {AboutContent && <div class="page-copy"><AboutContent /></div>}
+    <p><a class="back-link" href="/">← Back to the journal</a></p>
+  </article>
+</BaseLayout>
