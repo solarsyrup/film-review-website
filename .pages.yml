@@ -8,7 +8,7 @@ content:
     type: collection
     path: src/content/reviews
     format: yaml-frontmatter
-    filename: "{slug}.md"
+    filename: "{fields.slug}.md"
     fields:
       - name: title
         label: Title
@@ -29,9 +29,14 @@ content:
       - name: date
         label: Publication Date
         type: date
+        required: true
       - name: rating
-        label: Rating
+        label: Rating (out of 5)
         type: number
+      - name: summary
+        label: Short Summary (optional)
+        type: text
       - name: body
-        label: Review
+        label: Review Text
         type: rich-text
+        description: "Write only your review here. The title, director, date and rating are displayed separately above it."
