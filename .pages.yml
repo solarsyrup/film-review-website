@@ -1,6 +1,13 @@
 media:
-  input: public/images
-  output: /images
+  - name: images
+    label: Images
+    input: public/images
+    output: /images
+  - name: portfolio_files
+    label: Portfolio files
+    input: public/uploads
+    output: /uploads
+    categories: [audio, video, document]
 
 content:
   - name: reviews
@@ -100,3 +107,110 @@ content:
       - name: body
         label: Main About Text
         type: rich-text
+  
+  - name: portfolio_projects
+    label: Portfolio Projects
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    view:
+      fields: [title, category, year, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Project Title
+        type: string
+        required: true
+      - name: slug
+        label: URL Slug (lowercase-with-dashes)
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      - name: category
+        label: Type of Work
+        type: select
+        required: true
+        options:
+          values: [Film, Writing, Photography, Music, Other]
+      - name: year
+        label: Year Created (optional)
+        type: number
+      - name: date
+        label: Date Added (optional, newest first)
+        type: date
+      - name: role
+        label: Your Role (optional)
+        type: string
+        description: "For example, Director, Photographer, Writer, Composer."
+      - name: description
+        label: Short Description
+        type: text
+        description: "This appears on the portfolio gallery and above the work."
+      - name: cover
+        label: Cover Image (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
+      - name: coverAlt
+        label: Cover Image Description (optional)
+        type: string
+      - name: gallery
+        label: Photo Gallery (optional)
+        type: image
+        options:
+          media: images
+          multiple:
+            max: 24
+          rename: safe
+      - name: mediaFile
+        label: Upload Audio, Video, or a Document (optional)
+        type: file
+        description: "Small MP3/MP4/PDF files. For large videos or albums, use the link field instead."
+        options:
+          media: portfolio_files
+          categories: [audio, video, document]
+          rename: safe
+      - name: link
+        label: Online Link (optional)
+        type: string
+        description: "Paste a full https:// link to a video, song, album, script, or other project."
+      - name: body
+        label: Project Story or Writing
+        type: rich-text
+        description: "Add your writing, process notes, credits, or context. This appears on the individual project page."
+        options:
+          media: images
+
+  - name: portfolio_page
+    label: Portfolio Page
+    type: file
+    path: src/content/pages/portfolio.md
+    format: yaml-frontmatter
+    fields:
+      - name: slug
+        label: Internal Page ID
+        type: string
+        readonly: true
+      - name: title
+        label: Browser Tab Title
+        type: string
+      - name: eyebrow
+        label: Small Heading
+        type: string
+      - name: headline
+        label: Main Heading
+        type: string
+      - name: intro
+        label: Introductory Text
+        type: text
+      - name: body
+        label: Extra Portfolio Introduction
+        type: rich-text
+        options:
+          media: images
