@@ -77,7 +77,7 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
         {(mediaFile || externalLink) && (
           <div class="resource-links">
             {mediaFile && <a href={mediaFile} target="_blank" rel="noopener noreferrer">Open uploaded file ↗</a>}
-            {externalLink && <a href={externalLink} target="_blank" rel="noopener noreferrer">View the project online ↗</a>}
+            {externalLink && <a href={externalLink} target="_blank" rel="noopener noreferrer">{embeddedMedia?.provider === "Bandcamp" ? "Listen on Bandcamp ↗" : "View the project online ↗"}</a>}
           </div>
         )}
       </section>
