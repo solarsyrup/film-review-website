@@ -177,9 +177,13 @@ content:
           categories: [audio, video, document]
           rename: safe
       - name: link
-        label: Online Link (optional)
+        label: Project Link (auto-embeds when supported)
         type: string
-        description: "Paste a full https:// link to a video, song, album, script, or other project."
+        description: "Paste a public YouTube, Vimeo, SoundCloud, Spotify, or Google Drive link for automatic inline playback or preview. Any other URL remains a normal link."
+      - name: embedLink
+        label: Optional Embed Player URL or Bandcamp Embed Code
+        type: text
+        description: "Usually leave blank. For Bandcamp, open Share / Embed and paste the full iframe embed code (or its src URL) here. You can also use this to override the player shown for other services."
       - name: body
         label: Project Story or Writing
         type: rich-text
