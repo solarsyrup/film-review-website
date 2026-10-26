@@ -28,14 +28,14 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
 
 <BaseLayout title={project.data.title} description={project.data.description ?? `${project.data.category ?? "Creative"} work: ${project.data.title}`}>
   <article class="shell">
-    <header class="work-head">
+    <div class="work-head">
       <a class="back-link" href="/portfolio/">← All projects</a>
       <div class="eyebrow" style="margin-top:35px">{project.data.category ?? "Other"} {project.data.year ? `· ${project.data.year}` : ""}</div>
       <h1>{project.data.title}</h1>
       {project.data.role && <p class="work-role">{project.data.role}</p>}
       {project.data.description && <p class="work-summary">{project.data.description}</p>}
       {prettyDate && <p class="review-meta">Added {prettyDate}</p>}
-    </header>
+    </div>
 
     {project.data.cover && (
       <figure class="work-cover">
