@@ -1,0 +1,115 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+const projects = (await getCollection("projects")).sort((a, b) => {
+  const dateA = a.data.date?.getTime() ?? (a.data.year ? Date.UTC(a.data.year, 0, 1) : 0);
+  const dateB = b.data.date?.getTime() ?? (b.data.year ? Date.UTC(b.data.year, 0, 1) : 0);
+  return dateB - dateA || a.data.title.localeCompare(b.data.title);
+});
+
+const pages = await getCollection("pages");
+const portfolio = pages.find((page) => page.data.slug === "portfolio" || page.id === "portfolio");
+const rendered = portfolio ? await render(portfolio) : null;
+const PortfolioContent = rendered?.Content;
+---
+
+<BaseLayout title={portfolio?.data.title ?? "Portfolio"} description={portfolio?.data.intro ?? "An archive of original film, photography, writing, music, and other creative work."}>
+  <div class="shell">
+    <section class="hero portfolio-intro">
+      <div class="eyebrow">{portfolio?.data.eyebrow ?? "Original work"}</div>
+      <h1>{portfolio?.data.headline ?? "Selected work."}</h1>
+      <p>{portfolio?.data.intro ?? "A collection of things I've made, across film, photography, writing, music, and more."}</p>
+      {PortfolioContent && <div class="page-copy"><PortfolioContent /></div>}
+    </section>
+
+    <section aria-labelledby="portfolio-projects">
+      <div class="section-heading">
+        <h2 id="portfolio-projects">Projects</h2>
+        <span class="muted review-meta">{projects.length} {projects.length === 1 ? "piece" : "pieces"}</span>
+      </div>
+
+      {projects.length > 0 ? (
+        <div class="portfolio-grid">
+          {projects.map((project, index) => (
+            <article class="project-card">
+              <a class="project-link" href={`/portfolio/${project.data.slug || project.id}/`}>
+                {project.data.cover ? (
+                  <div class="project-image">
+                    <img src={project.data.cover} alt={project.data.coverAlt ?? `Cover for ${project.data.title}`} loading="lazy" />
+                  </div>
+                ) : (
+                  <div class="project-image project-placeholder">
+                    <span class="placeholder-index">ATC / {String(index + 1).padStart(2, "0")}</span>
+                    <span class="placeholder-label">{project.data.category ?? "Other"}</span>
+                  </div>
+                )}
+                <div class="project-details">
+                  <p class="project-type">{project.data.category ?? "Other"}{project.data.year ? ` · ${project.data.year}` : ""}</p>
+                  <h3>{project.data.title}</h3>
+                  {project.data.role && <p class="project-role">{project.data.role}</p>}
+                  {project.data.description && <p class="project-description">{project.data.description}</p>}
+                  <span class="project-more">View work ↗</span>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="portfolio-empty">
+          <p>Nothing in the archive just yet.</p>
+          <p class="muted">Films, photographs, writing, music, and other projects will appear here as they're added.</p>
+        </div>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .portfolio-intro { padding-bottom: 58px; }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 44px 28px;
+    margin-top: 24px;
+  }
+  .project-card { border-top: 1px solid var(--line); padding-top: 18px; min-width: 0; }
+  .project-link { display: block; }
+  .project-image {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    aspect-ratio: 3 / 2;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .project-image img { display: block; height: 100%; width: 100%; object-fit: cover; transition: transform .3s ease; }
+  .project-link:hover img { transform: scale(1.035); }
+  .project-placeholder { padding: 20px; }
+  .placeholder-index, .placeholder-label, .project-type, .project-role, .project-more {
+    font-family: "DM Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    font-size: .69rem;
+  }
+  .placeholder-index { color: var(--muted); }
+  .placeholder-label { font-family: "Newsreader", Georgia, serif; font-size: clamp(1.9rem, 5vw, 3.1rem); text-transform: none; letter-spacing: -.04em; color: var(--text); }
+  .project-type { color: var(--accent); margin: 0 0 8px; }
+  .project-details h3 { font-size: 2rem; margin: 0 0 8px; }
+  .project-role { color: var(--muted); margin: 0 0 9px; }
+  .project-description { color: var(--body-copy); font-size: .94rem; margin: 0 0 12px; }
+  .project-more { color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .portfolio-empty { border-top: 1px solid var(--line); padding: 32px 0 65px; }
+  .portfolio-empty p:first-child { font-family: "Newsreader", Georgia, serif; font-size: 1.5rem; }
+  @media (max-width: 620px) {
+    .portfolio-grid { grid-template-columns: 1fr; gap: 36px; }
+    .portfolio-intro { padding-bottom: 36px; }
+    .project-image { aspect-ratio: 3 / 2; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-image img { transition: none; }
+  }
+</style>
