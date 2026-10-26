@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
+import { resolveProjectEmbed } from "../../utils/projectEmbeds.mjs";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -15,6 +16,7 @@ const { Content } = await render(project);
 
 const rawLink = project.data.link?.trim();
 const externalLink = rawLink && /^https?:\/\//i.test(rawLink) ? rawLink : null;
+const embeddedMedia = resolveProjectEmbed(project.data.embedLink) ?? resolveProjectEmbed(project.data.link);
 const rawMedia = project.data.mediaFile?.trim();
 const mediaFile = rawMedia && (rawMedia.startsWith("/") || /^https?:\/\//i.test(rawMedia)) ? rawMedia : null;
 const fileExtension = (mediaFile ?? "").split(/[?#]/)[0].toLowerCase();
@@ -43,7 +45,7 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
       </figure>
     )}
 
-    {(mediaFile || externalLink) && (
+    {(mediaFile || externalLink || embeddedMedia) && (
       <section class="work-resources" aria-label="Project media">
         {mediaFile && isVideo && (
           <video controls playsinline preload="metadata" poster={project.data.cover} src={mediaFile}>
@@ -55,10 +57,28 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
             Your browser does not support this audio.
           </audio>
         )}
-        <div class="resource-links">
-          {mediaFile && <a href={mediaFile} target="_blank" rel="noopener noreferrer">Open uploaded file ↗</a>}
-          {externalLink && <a href={externalLink} target="_blank" rel="noopener noreferrer">View the project online ↗</a>}
-        </div>
+        {embeddedMedia && (
+          <div class="external-embed">
+            <div class="embed-label">{embeddedMedia.provider} player</div>
+            <iframe
+              class:list={["embed-frame", `embed-${embeddedMedia.kind}`]}
+              src={embeddedMedia.src}
+              title={`${project.data.title} — ${embeddedMedia.provider} player`}
+              width="100%"
+              height={embeddedMedia.height}
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        )}
+        {(mediaFile || externalLink) && (
+          <div class="resource-links">
+            {mediaFile && <a href={mediaFile} target="_blank" rel="noopener noreferrer">Open uploaded file ↗</a>}
+            {externalLink && <a href={externalLink} target="_blank" rel="noopener noreferrer">View the project online ↗</a>}
+          </div>
+        )}
       </section>
     )}
 
@@ -93,6 +113,11 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
   .work-resources { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 26px 0; margin: 0 0 35px; }
   .work-resources video { display: block; width: 100%; max-height: 500px; background: #111; }
   .work-resources audio { display: block; width: min(100%, 550px); }
+  .external-embed { width: 100%; margin: 3px 0 18px; }
+  .embed-label { color: var(--muted); font: .67rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 11px; }
+  .embed-frame { display: block; width: 100%; max-width: 100%; border: 0; background: var(--surface); }
+  .embed-frame.embed-video { aspect-ratio: 16 / 9; height: auto; background: #111; }
+  .embed-frame.embed-document { min-height: 460px; }
   .resource-links { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 16px; }
   .resource-links a { color: var(--accent); font: .72rem "DM Mono", monospace; border-bottom: 1px solid var(--line); padding-bottom: 3px; }
   .work-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; margin: 26px 0 42px; }
