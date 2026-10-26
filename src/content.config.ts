@@ -27,4 +27,23 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { reviews, pages };
+
+const projects = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/projects" }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string().optional(),
+    category: z.enum(["Film", "Writing", "Photography", "Music", "Other"]).optional(),
+    year: z.number().optional(),
+    date: z.coerce.date().optional(),
+    role: z.string().optional(),
+    description: z.string().optional(),
+    cover: z.string().optional(),
+    coverAlt: z.string().optional(),
+    gallery: z.array(z.string()).optional(),
+    mediaFile: z.string().optional(),
+    link: z.string().optional(),
+  }),
+});
+
+export const collections = { reviews, pages, projects };
