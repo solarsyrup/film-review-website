@@ -8,7 +8,11 @@ role: Singer
 description: My first Christmas album
 cover: /images/alb.jpg
 coverAlt: The album cover
-link: https://chriscaspers.bandcamp.com/album/a-caspers-christmas-vol-1
+link: '<iframe style="border: 0; width: 400px; height: 472px;"
+  src="https://bandcamp.com/EmbeddedPlayer/album=3653976643/size=large/bgcol=ffffff/linkcol=0687f5/artwork=small/transparent=true/"
+  seamless><a
+  href="https://chriscaspers.bandcamp.com/album/a-caspers-christmas-vol-1">A
+  Caspers Christmas, Vol. 1 by Chris Caspers</a></iframe>'
 ---
 I had the idea for this album while working the worst job of my life up until that point (it was my first). I immediately told my friend Camera whom I'd known since middle school who was working the same shift as me. I told him: "what if I sung a buncha Christmas songs and made an album outta it?". Needless to say he loved the idea and so did everybody else I told about it. 
 
