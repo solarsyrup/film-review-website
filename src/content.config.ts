@@ -43,6 +43,7 @@ const projects = defineCollection({
     gallery: z.array(z.string()).nullish(),
     mediaFile: z.string().nullish(),
     link: z.string().nullish(),
+    embedLink: z.string().nullish(),
   }),
 });
 
