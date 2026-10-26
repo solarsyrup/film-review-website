@@ -75,10 +75,21 @@ export function resolveProjectEmbed(rawValue) {
     if (parts[0] !== "EmbeddedPlayer") return null;
     const player = parts.join("/").match(/(?:^|\/)(album|track)=(\d{4,20})(?:\/|$)/);
     if (!player) return null;
+
+    // Keep the dimensions and appearance selected in Bandcamp's Share / Embed dialog.
+    // Replacing its URL with our own had removed artwork=small and could break the layout.
+    const settings = parts.slice(1);
+    if (!settings.every((segment) => /^[A-Za-z][A-Za-z0-9_-]*=[A-Za-z0-9_-]+$/.test(segment))) return null;
+    const originalWidth = iframe ? original.match(/\bwidth\s*:\s*(\d{2,4})px/i) : null;
+    const originalHeight = iframe ? original.match(/\bheight\s*:\s*(\d{2,4})px/i) : null;
+    const requestedWidth = originalWidth ? Number(originalWidth[1]) : 400;
+    const requestedHeight = originalHeight ? Number(originalHeight[1]) : player[1] === "album" ? 472 : 180;
+
     return {
       provider: "Bandcamp", kind: "audio",
-      src: "https://bandcamp.com/EmbeddedPlayer/" + player[1] + "=" + player[2] + "/size=large/bgcol=20201e/linkcol=c16b56/transparent=true/",
-      height: player[1] === "album" ? 470 : 180
+      src: "https://bandcamp.com/EmbeddedPlayer/" + settings.join("/") + "/",
+      width: Math.max(240, Math.min(requestedWidth, 900)),
+      height: Math.max(120, Math.min(requestedHeight, 1000))
     };
   }
 
