@@ -66,6 +66,7 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
               title={`${project.data.title} — ${embeddedMedia.provider} player`}
               width="100%"
               height={embeddedMedia.height}
+              style={embeddedMedia.provider === "Bandcamp" ? `max-width: ${embeddedMedia.width ?? 400}px; height: ${embeddedMedia.height}px;` : undefined}
               loading="lazy"
               referrerpolicy="strict-origin-when-cross-origin"
               allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
