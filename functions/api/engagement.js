@@ -2,7 +2,7 @@ import {
   json, configured, sameOrigin, smallJson, visitorCookie, cookieHeaders,
   ipActor, validEntry, verifyTurnstile, validName, validComment,
   enforceRate, cleanOldRates,
-} from "../_lib/engagement.js";
+} from "../../src/server/engagement.js";
 
 const unavailable = () => json({
   error: "Comments and likes are not available until Cloudflare setup is complete.",
