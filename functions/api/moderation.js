@@ -1,7 +1,7 @@
 import {
   json, configured, sameOrigin, smallJson, checkAdminAuth,
   ipActor, enforceRate,
-} from "../_lib/engagement.js";
+} from "../../src/server/engagement.js";
 
 export async function onRequestPost({ request, env }) {
   if (!configured(env) || typeof env.MODERATION_TOKEN !== "string" || env.MODERATION_TOKEN.length < 32) {
