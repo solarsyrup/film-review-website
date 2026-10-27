@@ -1,0 +1,20 @@
+# Generated/build files
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+# Never commit Cloudflare / local runtime secrets
+.dev.vars*
+.env
+.env.*
+*.pem
+*.key
+
+# Local development databases
+*.sqlite
+*.sqlite3
+*.db
+
+# OS/editor
+.DS_Store
