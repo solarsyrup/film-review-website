@@ -1,0 +1,261 @@
+---
+interface Props {
+  kind: "review" | "portfolio";
+  slug: string;
+}
+const { kind, slug } = Astro.props;
+---
+
+<section class="engagement" data-engagement data-entry={`${kind}:${slug}`} aria-label="Likes and comments">
+  <div class="reaction-bar">
+    <div>
+      <div class="eyebrow">Reader responses</div>
+      <h2>Thoughts & reactions</h2>
+    </div>
+    <button type="button" class="like-button" data-like disabled aria-pressed="false">
+      <span data-heart aria-hidden="true">♡</span>
+      <span data-like-label>Like</span>
+      <span data-like-count class="like-count">0</span>
+    </button>
+  </div>
+
+  <div class="comment-heading">
+    <h3>Comments <span data-comment-count class="comment-count"></span></h3>
+    <p>Choose any display name. Comments appear after approval.</p>
+  </div>
+  <div class="comments-list" data-comments aria-live="polite">
+    <p class="quiet">Loading discussion…</p>
+  </div>
+
+  <form class="comment-form" data-comment-form>
+    <div class="form-field">
+      <label for={`atc-name-${kind}-${slug}`}>Display name</label>
+      <input id={`atc-name-${kind}-${slug}`} name="name" maxlength="40" minlength="2" autocomplete="nickname" placeholder="Your name or nickname" required />
+    </div>
+    <div class="form-field">
+      <label for={`atc-body-${kind}-${slug}`}>Your comment</label>
+      <textarea id={`atc-body-${kind}-${slug}`} name="body" minlength="3" maxlength="1600" rows="4" placeholder="What did you think?" required></textarea>
+    </div>
+    <div class="spam-field" aria-hidden="true">
+      <label>Leave this field blank <input name="website" autocomplete="off" tabindex="-1" /></label>
+    </div>
+    <p class="captcha-note">Complete the verification below before liking or commenting.</p>
+    <div class="captcha-box" data-captcha></div>
+    <button class="submit-comment" type="submit" disabled>Submit comment for approval</button>
+  </form>
+  <p class="engagement-feedback" data-feedback role="status" aria-live="polite"></p>
+</section>
+
+<script>
+  function buildTextElement(tag, className, text) {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    element.textContent = text;
+    return element;
+  }
+
+  const formatDate = (seconds) => {
+    const value = Number(seconds);
+    if (!Number.isFinite(value)) return "";
+    return new Date(value * 1000).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric",
+    });
+  };
+
+  function loadVerificationScript() {
+    if (window.turnstile) return Promise.resolve(window.turnstile);
+    if (window.__atcTurnstileLoader) return window.__atcTurnstileLoader;
+    window.__atcTurnstileLoader = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.onload = () => {
+        if (window.turnstile) resolve(window.turnstile);
+        else reject(new Error("Verification did not load."));
+      };
+      script.onerror = () => reject(new Error("Verification script was blocked."));
+      document.head.appendChild(script);
+    });
+    return window.__atcTurnstileLoader;
+  }
+
+  document.querySelectorAll("[data-engagement]").forEach(async (root) => {
+    if (root.dataset.started) return;
+    root.dataset.started = "1";
+
+    const entry = root.dataset.entry;
+    const likeButton = root.querySelector("[data-like]");
+    const likeCount = root.querySelector("[data-like-count]");
+    const likeLabel = root.querySelector("[data-like-label]");
+    const heart = root.querySelector("[data-heart]");
+    const commentCount = root.querySelector("[data-comment-count]");
+    const list = root.querySelector("[data-comments]");
+    const form = root.querySelector("[data-comment-form]");
+    const submitButton = form.querySelector("[type=submit]");
+    const captchaMount = root.querySelector("[data-captcha]");
+    const feedback = root.querySelector("[data-feedback]");
+    let liked = false;
+    let turnstileToken = "";
+    let widgetId = null;
+    let busy = false;
+
+    const say = (message, isError = false) => {
+      feedback.textContent = message;
+      feedback.dataset.error = isError ? "true" : "false";
+    };
+
+    function updateLike(count) {
+      likeButton.setAttribute("aria-pressed", String(liked));
+      likeLabel.textContent = liked ? "Liked" : "Like";
+      heart.textContent = liked ? "♥" : "♡";
+      likeCount.textContent = String(Math.max(0, Number(count) || 0));
+    }
+
+    function showComments(comments) {
+      list.replaceChildren();
+      commentCount.textContent = `(${comments.length})`;
+      if (!comments.length) {
+        list.appendChild(buildTextElement("p", "quiet", "No published comments yet. Start the conversation."));
+        return;
+      }
+
+      for (const item of comments) {
+        const card = buildTextElement("article", "reader-comment", "");
+        const top = buildTextElement("div", "comment-top", "");
+        top.appendChild(buildTextElement("strong", "reader-name", item.name));
+        top.appendChild(buildTextElement("time", "comment-date", formatDate(item.createdAt)));
+        card.appendChild(top);
+        card.appendChild(buildTextElement("p", "reader-message", item.body));
+        list.appendChild(card);
+      }
+    }
+
+    function resetChallenge() {
+      turnstileToken = "";
+      if (widgetId !== null && window.turnstile) window.turnstile.reset(widgetId);
+    }
+
+    async function perform(action, extra = {}) {
+      if (busy) return null;
+      if (!turnstileToken) {
+        say("Please finish the verification below first.", true);
+        return null;
+      }
+      busy = true;
+      likeButton.disabled = true;
+      submitButton.disabled = true;
+      say("Sending…");
+      try {
+        const res = await fetch("/api/engagement", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ entry, action, turnstileToken, ...extra }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Submission failed.");
+        say(data.message || "Saved.");
+        return data;
+      } catch (error) {
+        say(error.message || "Please try again.", true);
+        return null;
+      } finally {
+        busy = false;
+        likeButton.disabled = false;
+        submitButton.disabled = false;
+        resetChallenge();
+      }
+    }
+
+    likeButton.addEventListener("click", async () => {
+      const result = await perform(liked ? "unlike" : "like");
+      if (result) {
+        liked = Boolean(result.liked);
+        updateLike(result.count);
+      }
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const payload = new FormData(form);
+      const result = await perform("comment", {
+        name: String(payload.get("name") || ""),
+        body: String(payload.get("body") || ""),
+        website: String(payload.get("website") || ""),
+      });
+      if (result) {
+        form.querySelector("textarea").value = "";
+        say("Thank you! Your comment is awaiting approval.");
+      }
+    });
+
+    try {
+      const response = await fetch(`/api/engagement?entry=${encodeURIComponent(entry)}`, {
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Discussion is unavailable.");
+      liked = Boolean(data.liked);
+      updateLike(data.count);
+      showComments(Array.isArray(data.comments) ? data.comments : []);
+      if (!data.siteKey) throw new Error("Verification is not configured.");
+
+      const turnstile = await loadVerificationScript();
+      widgetId = turnstile.render(captchaMount, {
+        sitekey: data.siteKey,
+        theme: "auto",
+        action: "atc_engagement",
+        callback: (token) => { turnstileToken = token; say("Verified. You can now like or comment."); },
+        "expired-callback": () => { turnstileToken = ""; say("Verification expired. Please complete it again.", true); },
+        "error-callback": () => { turnstileToken = ""; say("Verification failed to load. Please try again.", true); },
+      });
+      likeButton.disabled = false;
+      submitButton.disabled = false;
+      say("");
+    } catch (error) {
+      list.replaceChildren(buildTextElement("p", "quiet", "Discussion will appear here once it is available."));
+      say(error.message || "This section is temporarily unavailable.", true);
+    }
+  });
+</script>
+
+<style>
+  .engagement { max-width: 690px; margin: 54px 0 32px; border-top: 1px solid var(--line); padding-top: 32px; }
+  .reaction-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .reaction-bar h2 { font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 7px 0 0; }
+  .like-button { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 10px 14px; cursor: pointer; white-space: nowrap; font: .72rem "DM Mono", monospace; }
+  .like-button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .like-button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+  .like-button:disabled, .submit-comment:disabled { opacity: .5; cursor: not-allowed; }
+  [data-heart] { color: var(--accent); font-size: 1.3rem; line-height: 1; }
+  .like-count { border-left: 1px solid var(--line); padding-left: 8px; }
+  .comment-heading { margin: 37px 0 18px; }
+  .comment-heading h3 { font-size: 1.45rem; margin: 0 0 3px; }
+  .comment-heading p, .comment-count { font: .71rem "DM Mono", monospace; color: var(--muted); }
+  .comments-list { display: grid; gap: 0; }
+  .reader-comment { padding: 17px 0; border-top: 1px solid var(--line); }
+  .comment-top { display: flex; align-items: baseline; gap: 16px; justify-content: space-between; margin-bottom: 7px; }
+  .reader-name { font-size: .89rem; overflow-wrap: anywhere; }
+  .comment-date { color: var(--muted); font: .67rem "DM Mono", monospace; white-space: nowrap; }
+  .reader-message { font-size: .95rem; color: var(--body-copy); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .quiet { color: var(--muted); font-size: .9rem; }
+  .comment-form { display: grid; gap: 14px; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 24px; }
+  .form-field { display: grid; gap: 6px; }
+  .form-field label { color: var(--text); font: .71rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .06em; }
+  .form-field input, .form-field textarea { width: 100%; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 11px 13px; font: .95rem "DM Sans", sans-serif; }
+  .form-field textarea { resize: vertical; line-height: 1.5; }
+  .form-field input:focus, .form-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .captcha-note { margin: 1px 0 0; color: var(--muted); font-size: .8rem; }
+  .captcha-box { min-height: 0; }
+  .submit-comment { justify-self: start; padding: 12px 17px; color: var(--bg); background: var(--text); border: 0; border-radius: 3px; cursor: pointer; font: .72rem "DM Mono", monospace; }
+  .submit-comment:hover:not(:disabled) { background: var(--accent); }
+  .engagement-feedback { font-size: .81rem; color: var(--muted); min-height: 1.4rem; margin: 16px 0 0; }
+  .engagement-feedback[data-error="true"] { color: var(--accent); }
+  .spam-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  @media (max-width: 620px) {
+    .reaction-bar { align-items: flex-start; flex-direction: column; gap: 15px; }
+    .like-button { align-self: flex-start; }
+  }
+</style>
