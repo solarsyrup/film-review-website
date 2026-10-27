@@ -144,8 +144,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .mod-controls input, .mod-controls select { color: var(--text); background: var(--surface); border: 1px solid var(--line); padding: 12px; font: .84rem "DM Mono", monospace; min-width: 0; }
   .mod-controls input { grid-column: 1 / -1; }
   .mod-controls select { grid-column: 1; }
-  .mod-controls button, .mod-actions button, .mod-pages button { background: transparent; border: 1px solid var(--line); color: var(--text); font: .69rem "DM Mono", monospace; cursor: pointer; padding: 11px 13px; }
-  .mod-controls button:hover, .mod-actions button:hover, .mod-pages button:hover { color: var(--accent); border-color: var(--accent); }
+  .mod-controls button, .moderator :global(.mod-actions button), .mod-pages button { background: transparent; border: 1px solid var(--line); color: var(--text); font: .69rem "DM Mono", monospace; cursor: pointer; padding: 11px 13px; }
+  .mod-controls button:hover, .moderator :global(.mod-actions button):hover, .mod-pages button:hover { color: var(--accent); border-color: var(--accent); }
   #moderator-status { color: var(--muted); font-size: .87rem; }
   .moderator :global(.mod-card) { padding: 23px 0; border-top: 1px solid var(--line); }
   .moderator :global(.mod-meta) { color: var(--muted); font: .7rem "DM Mono", monospace; margin: 0 0 7px; overflow-wrap: anywhere; }
