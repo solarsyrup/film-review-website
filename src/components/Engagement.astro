@@ -328,7 +328,9 @@ const { kind, slug } = Astro.props;
   .engagement-feedback[data-error="true"] { color: var(--accent); }
   .spam-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   @media (max-width: 620px) {
-    .reaction-bar { align-items: flex-start; flex-direction: column; gap: 15px; }
-    .like-button { align-self: flex-start; }
+    .engagement { margin-top: 72px; padding-top: 22px; }
+    .reaction-bar { align-items: flex-start; flex-direction: column; gap: 13px; }
+    .like-button { align-self: flex-start; min-height: 44px; }
+    .submit-comment { min-height: 44px; }
   }
 </style>
