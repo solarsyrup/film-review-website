@@ -147,11 +147,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   .mod-controls button, .mod-actions button, .mod-pages button { background: transparent; border: 1px solid var(--line); color: var(--text); font: .69rem "DM Mono", monospace; cursor: pointer; padding: 11px 13px; }
   .mod-controls button:hover, .mod-actions button:hover, .mod-pages button:hover { color: var(--accent); border-color: var(--accent); }
   #moderator-status { color: var(--muted); font-size: .87rem; }
-  .mod-card { padding: 23px 0; border-top: 1px solid var(--line); }
-  .mod-meta { color: var(--muted); font: .7rem "DM Mono", monospace; margin: 0 0 7px; overflow-wrap: anywhere; }
-  .mod-name { font-size: 1rem; }
-  .mod-body { white-space: pre-wrap; overflow-wrap: anywhere; margin: 9px 0 17px; color: var(--body-copy); }
-  .mod-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+  .moderator :global(.mod-card) { padding: 23px 0; border-top: 1px solid var(--line); }
+  .moderator :global(.mod-meta) { color: var(--muted); font: .7rem "DM Mono", monospace; margin: 0 0 7px; overflow-wrap: anywhere; }
+  .moderator :global(.mod-name) { font-size: 1rem; }
+  .moderator :global(.mod-body) { white-space: pre-wrap; overflow-wrap: anywhere; margin: 9px 0 17px; color: var(--body-copy); }
+  .moderator :global(.mod-actions) { display: flex; gap: 9px; flex-wrap: wrap; }
   .mod-pages { display: flex; align-items: center; gap: 13px; margin: 22px 0; font: .71rem "DM Mono", monospace; }
   .mod-pages button:disabled { opacity: .4; cursor: default; }
   @media (max-width: 620px) { .mod-controls { grid-template-columns: 1fr; } .mod-controls select, .mod-controls button { grid-column: 1; } }
