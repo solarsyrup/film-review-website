@@ -1,0 +1,5 @@
+# The public-facing moderation form is protected by a server-side secret.
+/moderate
+  X-Robots-Tag: noindex, nofollow
+/moderate/*
+  X-Robots-Tag: noindex, nofollow
