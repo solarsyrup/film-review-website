@@ -1,0 +1,158 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Comment moderation" description="Private comment moderation for After the Credits.">
+  <div class="shell moderator">
+    <div class="eyebrow">Owner tools</div>
+    <h1>Comment moderation.</h1>
+    <p class="muted">Only you can approve or remove comments. Enter the secret moderation key configured in Cloudflare. It is used for this page only and isn't saved to your browser's storage.</p>
+
+    <form id="moderator-login" class="mod-controls">
+      <label for="moderator-key">Moderation key</label>
+      <input id="moderator-key" type="password" autocomplete="off" spellcheck="false" required placeholder="Paste your private key" />
+      <label for="moderator-filter">Show</label>
+      <select id="moderator-filter">
+        <option value="pending">Awaiting approval</option>
+        <option value="approved">Published</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <button type="submit">Load comments</button>
+    </form>
+
+    <p id="moderator-status" role="status" aria-live="polite"></p>
+    <div id="moderator-list" class="moderator-list"></div>
+    <div id="moderator-pages" class="mod-pages" hidden>
+      <button id="moderator-prev" type="button">← Previous</button>
+      <span id="moderator-page"></span>
+      <button id="moderator-next" type="button">Next →</button>
+    </div>
+    <p><a class="back-link" href="/">← Back to journal</a></p>
+  </div>
+</BaseLayout>
+
+<script>
+  const loginForm = document.getElementById("moderator-login");
+  const key = document.getElementById("moderator-key");
+  const filter = document.getElementById("moderator-filter");
+  const status = document.getElementById("moderator-status");
+  const list = document.getElementById("moderator-list");
+  const pages = document.getElementById("moderator-pages");
+  const next = document.getElementById("moderator-next");
+  const prev = document.getElementById("moderator-prev");
+  const pageIndicator = document.getElementById("moderator-page");
+  let offset = 0;
+  let total = 0;
+
+  const createText = (tag, className, content) => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    el.textContent = content;
+    return el;
+  };
+
+  async function callAdmin(data) {
+    const response = await fetch("/api/moderation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + key.value.trim(),
+      },
+      credentials: "same-origin",
+      cache: "no-store",
+      body: JSON.stringify(data),
+    });
+    const json = await response.json();
+    if (!response.ok) throw new Error(json.error || "Moderation request failed.");
+    return json;
+  }
+
+  function moderationAction(type, id) {
+    if (type === "delete" && !window.confirm("Permanently delete this comment?")) return;
+    status.textContent = "Saving change…";
+    callAdmin({ operation: type, id })
+      .then(() => loadComments())
+      .catch((err) => { status.textContent = err.message; });
+  }
+
+  async function loadComments() {
+    if (!key.value.trim()) {
+      status.textContent = "Enter your moderation key first.";
+      return;
+    }
+    status.textContent = "Loading comments…";
+    list.replaceChildren();
+    pages.hidden = true;
+
+    try {
+      const result = await callAdmin({ operation: "list", status: filter.value, offset });
+      total = result.total;
+      status.textContent = `${total} ${filter.value} comments.`;
+
+      for (const item of result.comments) {
+        const article = createText("article", "mod-card", "");
+        const meta = createText("p", "mod-meta", `${item.entryKey} · ${new Date(item.createdAt * 1000).toLocaleString()}`);
+        article.appendChild(meta);
+        article.appendChild(createText("strong", "mod-name", item.name));
+        article.appendChild(createText("p", "mod-body", item.body));
+
+        const actions = createText("div", "mod-actions", "");
+        const buttons = [
+          {label:"Approve", operation:"approve", show:filter.value !== "approved"},
+          {label:"Reject", operation:"reject", show:filter.value !== "rejected"},
+          {label:"Delete permanently", operation:"delete", show:true},
+        ];
+        for (const itemAction of buttons.filter((button) => button.show)) {
+          const button = createText("button", "", itemAction.label);
+          button.type = "button";
+          button.addEventListener("click", () => moderationAction(itemAction.operation, item.id));
+          actions.appendChild(button);
+        }
+        article.appendChild(actions);
+        list.appendChild(article);
+      }
+
+      if (!result.comments.length) {
+        list.appendChild(createText("p", "muted", "No comments in this section."));
+      }
+
+      pages.hidden = total <= 50 && offset === 0;
+      prev.disabled = offset === 0;
+      next.disabled = offset + 50 >= total;
+      pageIndicator.textContent = `${offset + 1}–${Math.min(offset + 50, total)} of ${total}`;
+    } catch (error) {
+      status.textContent = error.message || "Failed to load moderation.";
+    }
+  }
+
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    offset = 0;
+    loadComments();
+  });
+  filter.addEventListener("change", () => { offset = 0; if (key.value.trim()) loadComments(); });
+  next.addEventListener("click", () => { offset += 50; loadComments(); });
+  prev.addEventListener("click", () => { offset = Math.max(0, offset - 50); loadComments(); });
+</script>
+
+<style>
+  .moderator { padding: 72px 0 90px; max-width: 780px; }
+  .moderator h1 { font-size: clamp(2.7rem, 7vw, 4.4rem); }
+  .moderator > p.muted { max-width: 590px; }
+  .mod-controls { display: grid; grid-template-columns: 1fr auto; gap: 9px 15px; border: 1px solid var(--line); padding: 20px; margin: 28px 0 18px; }
+  .mod-controls label { grid-column: 1 / -1; font: .69rem "DM Mono", monospace; text-transform: uppercase; color: var(--muted); }
+  .mod-controls input, .mod-controls select { color: var(--text); background: var(--surface); border: 1px solid var(--line); padding: 12px; font: .84rem "DM Mono", monospace; min-width: 0; }
+  .mod-controls input { grid-column: 1 / -1; }
+  .mod-controls select { grid-column: 1; }
+  .mod-controls button, .mod-actions button, .mod-pages button { background: transparent; border: 1px solid var(--line); color: var(--text); font: .69rem "DM Mono", monospace; cursor: pointer; padding: 11px 13px; }
+  .mod-controls button:hover, .mod-actions button:hover, .mod-pages button:hover { color: var(--accent); border-color: var(--accent); }
+  #moderator-status { color: var(--muted); font-size: .87rem; }
+  .mod-card { padding: 23px 0; border-top: 1px solid var(--line); }
+  .mod-meta { color: var(--muted); font: .7rem "DM Mono", monospace; margin: 0 0 7px; overflow-wrap: anywhere; }
+  .mod-name { font-size: 1rem; }
+  .mod-body { white-space: pre-wrap; overflow-wrap: anywhere; margin: 9px 0 17px; color: var(--body-copy); }
+  .mod-actions { display: flex; gap: 9px; flex-wrap: wrap; }
+  .mod-pages { display: flex; align-items: center; gap: 13px; margin: 22px 0; font: .71rem "DM Mono", monospace; }
+  .mod-pages button:disabled { opacity: .4; cursor: default; }
+  @media (max-width: 620px) { .mod-controls { grid-template-columns: 1fr; } .mod-controls select, .mod-controls button { grid-column: 1; } }
+</style>
