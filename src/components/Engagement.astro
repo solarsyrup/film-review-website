@@ -235,12 +235,12 @@ const { kind, slug } = Astro.props;
   .comment-heading h3 { font-size: 1.45rem; margin: 0 0 3px; }
   .comment-heading p, .comment-count { font: .71rem "DM Mono", monospace; color: var(--muted); }
   .comments-list { display: grid; gap: 0; }
-  .reader-comment { padding: 17px 0; border-top: 1px solid var(--line); }
-  .comment-top { display: flex; align-items: baseline; gap: 16px; justify-content: space-between; margin-bottom: 7px; }
-  .reader-name { font-size: .89rem; overflow-wrap: anywhere; }
-  .comment-date { color: var(--muted); font: .67rem "DM Mono", monospace; white-space: nowrap; }
-  .reader-message { font-size: .95rem; color: var(--body-copy); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
-  .quiet { color: var(--muted); font-size: .9rem; }
+  .engagement :global(.reader-comment) { padding: 17px 0; border-top: 1px solid var(--line); }
+  .engagement :global(.comment-top) { display: flex; align-items: baseline; gap: 16px; justify-content: space-between; margin-bottom: 7px; }
+  .engagement :global(.reader-name) { font-size: .89rem; overflow-wrap: anywhere; }
+  .engagement :global(.comment-date) { color: var(--muted); font: .67rem "DM Mono", monospace; white-space: nowrap; }
+  .engagement :global(.reader-message) { font-size: .95rem; color: var(--body-copy); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .engagement :global(.quiet) { color: var(--muted); font-size: .9rem; }
   .comment-form { display: grid; gap: 14px; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 24px; }
   .form-field { display: grid; gap: 6px; }
   .form-field label { color: var(--text); font: .71rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .06em; }
