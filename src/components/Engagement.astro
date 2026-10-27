@@ -68,7 +68,7 @@ const { kind, slug } = Astro.props;
 
   function turnstileErrorDetails(errorCode) {
     const code = typeof errorCode === "string" || typeof errorCode === "number"
-      ? String(errorCode).match(/^\\d{5,6}$/)?.[0] ?? ""
+      ? String(errorCode).match(/^\d{5,6}$/)?.[0] ?? ""
       : "";
     let hint = "Try refreshing the page, a private window, or a different browser. Disable blockers for challenges.cloudflare.com.";
     if (code === "110100" || code === "110110" || code === "400020" || code === "400070") {
