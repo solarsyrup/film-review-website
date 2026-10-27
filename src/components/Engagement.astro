@@ -41,6 +41,10 @@ const { kind, slug } = Astro.props;
     </div>
     <p class="captcha-note">Complete the verification below before liking or commenting.</p>
     <div class="captcha-box" data-captcha></div>
+    <div class="verification-help" data-verification-help hidden>
+      <p data-verification-detail></p>
+      <button type="button" class="verification-retry" data-verification-retry>Retry verification</button>
+    </div>
     <button class="submit-comment" type="submit" disabled>Submit comment for approval</button>
   </form>
   <p class="engagement-feedback" data-feedback role="status" aria-live="polite"></p>
@@ -61,6 +65,27 @@ const { kind, slug } = Astro.props;
       month: "short", day: "numeric", year: "numeric",
     });
   };
+
+  function turnstileErrorDetails(errorCode) {
+    const code = typeof errorCode === "string" || typeof errorCode === "number"
+      ? String(errorCode).match(/^\\d{5,6}$/)?.[0] ?? ""
+      : "";
+    let hint = "Try refreshing the page, a private window, or a different browser. Disable blockers for challenges.cloudflare.com.";
+    if (code === "110100" || code === "110110" || code === "400020" || code === "400070") {
+      hint = "The Turnstile site key is invalid, missing, or disabled. Check the Site Key configured in your Cloudflare Pages production variables.";
+    } else if (code === "110200" || code === "400021") {
+      hint = "This hostname is not permitted by the Turnstile widget. In Cloudflare Turnstile > your widget > Hostname Management, allow afterthecredits.pages.dev.";
+    } else if (code === "200500") {
+      hint = "The Cloudflare challenge iframe could not load. Check ad/tracker blockers, VPNs, or network restrictions on challenges.cloudflare.com.";
+    } else if (code === "200100") {
+      hint = "The challenge detected a clock or caching problem. Check your device time and reload without cache.";
+    } else if (code.startsWith("300") || code.startsWith("600")) {
+      hint = "Cloudflare could not complete this security challenge. Retry in a private window, or test another browser/network.";
+    } else if (code === "110600" || code === "110620") {
+      hint = "The challenge timed out. Retry verification.";
+    }
+    return { code, hint };
+  }
 
   function loadVerificationScript() {
     if (window.turnstile) return Promise.resolve(window.turnstile);
@@ -94,6 +119,9 @@ const { kind, slug } = Astro.props;
     const submitButton = form.querySelector("[type=submit]");
     const captchaMount = root.querySelector("[data-captcha]");
     const feedback = root.querySelector("[data-feedback]");
+    const verificationHelp = root.querySelector("[data-verification-help]");
+    const verificationDetail = root.querySelector("[data-verification-detail]");
+    const verificationRetry = root.querySelector("[data-verification-retry]");
     let liked = false;
     let turnstileToken = "";
     let widgetId = null;
@@ -132,8 +160,25 @@ const { kind, slug } = Astro.props;
 
     function resetChallenge() {
       turnstileToken = "";
-      if (widgetId !== null && window.turnstile) window.turnstile.reset(widgetId);
+      if (widgetId !== null && window.turnstile) {
+        try { window.turnstile.reset(widgetId); }
+        catch { /* Keep server-side verification mandatory even if the widget fails. */ }
+      }
     }
+
+    verificationRetry.addEventListener("click", () => {
+      verificationHelp.hidden = true;
+      say("Trying verification again…");
+      if (widgetId !== null && window.turnstile) {
+        try {
+          window.turnstile.reset(widgetId);
+          return;
+        } catch {
+          // An iframe that failed to initialize may need a full page refresh.
+        }
+      }
+      window.location.reload();
+    });
 
     async function perform(action, extra = {}) {
       if (busy) return null;
@@ -207,16 +252,38 @@ const { kind, slug } = Astro.props;
         sitekey: data.siteKey,
         theme: "auto",
         action: "atc_engagement",
-        callback: (token) => { turnstileToken = token; say("Verified. You can now like or comment."); },
-        "expired-callback": () => { turnstileToken = ""; say("Verification expired. Please complete it again.", true); },
-        "error-callback": () => { turnstileToken = ""; say("Verification failed to load. Please try again.", true); },
+        callback: (token) => {
+          turnstileToken = token;
+          verificationHelp.hidden = true;
+          say("Verified. You can now like or comment.");
+        },
+        "expired-callback": () => {
+          turnstileToken = "";
+          say("Verification expired. Please complete it again.", true);
+        },
+        "timeout-callback": () => {
+          turnstileToken = "";
+          say("Verification timed out. Please complete it again.", true);
+        },
+        "error-callback": (code) => {
+          turnstileToken = "";
+          const problem = turnstileErrorDetails(code);
+          const label = problem.code ? `Cloudflare error ${problem.code}` : "Verification error";
+          verificationDetail.textContent = `${label}: ${problem.hint}`;
+          verificationHelp.hidden = false;
+          say(`${label}. Use Retry verification below, or check the explanation.`, true);
+          console.warn("Turnstile widget error:", problem.code || "unknown");
+          return true;
+        },
       });
       likeButton.disabled = false;
       submitButton.disabled = false;
-      say("");
     } catch (error) {
+      const detail = error.message || "This section is temporarily unavailable.";
       list.replaceChildren(buildTextElement("p", "quiet", "Discussion will appear here once it is available."));
-      say(error.message || "This section is temporarily unavailable.", true);
+      verificationDetail.textContent = detail + " If you use a blocker or privacy extension, allow challenges.cloudflare.com.";
+      verificationHelp.hidden = false;
+      say(detail, true);
     }
   });
 </script>
@@ -249,6 +316,11 @@ const { kind, slug } = Astro.props;
   .form-field input:focus, .form-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
   .captcha-note { margin: 1px 0 0; color: var(--muted); font-size: .8rem; }
   .captcha-box { min-height: 0; }
+  .verification-help[hidden] { display: none; }
+  .verification-help { border-left: 2px solid var(--accent); padding: 4px 0 4px 14px; color: var(--body-copy); font-size: .82rem; line-height: 1.5; }
+  .verification-help p { margin: 0 0 11px; }
+  .verification-retry { background: transparent; color: var(--text); border: 1px solid var(--line); border-radius: 3px; padding: 8px 11px; cursor: pointer; font: .7rem "DM Mono", monospace; }
+  .verification-retry:hover { color: var(--accent); border-color: var(--accent); }
   .submit-comment { justify-self: start; padding: 12px 17px; color: var(--bg); background: var(--text); border: 0; border-radius: 3px; cursor: pointer; font: .72rem "DM Mono", monospace; }
   .submit-comment:hover:not(:disabled) { background: var(--accent); }
   .engagement-feedback { font-size: .81rem; color: var(--muted); min-height: 1.4rem; margin: 16px 0 0; }
