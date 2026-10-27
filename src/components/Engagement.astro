@@ -34,7 +34,7 @@ const { kind, slug } = Astro.props;
     </div>
     <div class="form-field">
       <label for={`atc-body-${kind}-${slug}`}>Your comment</label>
-      <textarea id={`atc-body-${kind}-${slug}`} name="body" minlength="3" maxlength="1600" rows="4" placeholder="What did you think?" required></textarea>
+      <textarea id={`atc-body-${kind}-${slug}`} name="body" minlength="3" maxlength="1600" rows="3" placeholder="What did you think?" required></textarea>
     </div>
     <div class="spam-field" aria-hidden="true">
       <label>Leave this field blank <input name="website" autocomplete="off" tabindex="-1" /></label>
@@ -289,41 +289,42 @@ const { kind, slug } = Astro.props;
 </script>
 
 <style>
-  .engagement { max-width: 690px; margin: 54px 0 32px; border-top: 1px solid var(--line); padding-top: 32px; }
-  .reaction-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-  .reaction-bar h2 { font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 7px 0 0; }
-  .like-button { display: inline-flex; align-items: center; gap: 8px; background: transparent; border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 10px 14px; cursor: pointer; white-space: nowrap; font: .72rem "DM Mono", monospace; }
+  .engagement { max-width: 620px; margin: 94px 0 26px; border-top: 1px solid var(--line); padding-top: 24px; }
+  .reaction-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .reaction-bar h2 { font-size: clamp(1.5rem, 4.5vw, 1.9rem); margin: 5px 0 0; }
+  .like-button { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 9px 12px; min-height: 40px; cursor: pointer; white-space: nowrap; font: .7rem "DM Mono", monospace; }
   .like-button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
   .like-button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
   .like-button:disabled, .submit-comment:disabled { opacity: .5; cursor: not-allowed; }
-  [data-heart] { color: var(--accent); font-size: 1.3rem; line-height: 1; }
+  [data-heart] { color: var(--accent); font-size: 1.2rem; line-height: 1; }
   .like-count { border-left: 1px solid var(--line); padding-left: 8px; }
-  .comment-heading { margin: 37px 0 18px; }
-  .comment-heading h3 { font-size: 1.45rem; margin: 0 0 3px; }
+  .comment-heading { margin: 26px 0 14px; }
+  .comment-heading h3 { font-size: 1.25rem; margin: 0 0 3px; }
   .comment-heading p, .comment-count { font: .71rem "DM Mono", monospace; color: var(--muted); }
   .comments-list { display: grid; gap: 0; }
-  .engagement :global(.reader-comment) { padding: 17px 0; border-top: 1px solid var(--line); }
+  .engagement :global(.reader-comment) { padding: 13px 0; border-top: 1px solid var(--line); }
   .engagement :global(.comment-top) { display: flex; align-items: baseline; gap: 16px; justify-content: space-between; margin-bottom: 7px; }
   .engagement :global(.reader-name) { font-size: .89rem; overflow-wrap: anywhere; }
   .engagement :global(.comment-date) { color: var(--muted); font: .67rem "DM Mono", monospace; white-space: nowrap; }
-  .engagement :global(.reader-message) { font-size: .95rem; color: var(--body-copy); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .engagement :global(.reader-message) { font-size: .91rem; color: var(--body-copy); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
   .engagement :global(.quiet) { color: var(--muted); font-size: .9rem; }
-  .comment-form { display: grid; gap: 14px; border-top: 1px solid var(--line); margin-top: 20px; padding-top: 24px; }
-  .form-field { display: grid; gap: 6px; }
-  .form-field label { color: var(--text); font: .71rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .06em; }
-  .form-field input, .form-field textarea { width: 100%; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 11px 13px; font: .95rem "DM Sans", sans-serif; }
-  .form-field textarea { resize: vertical; line-height: 1.5; }
+  .comment-form { display: grid; gap: 11px; border-top: 1px solid var(--line); margin-top: 16px; padding-top: 18px; }
+  .form-field { display: grid; gap: 5px; }
+  .form-field label { color: var(--text); font: .68rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .06em; }
+  .form-field input, .form-field textarea { width: 100%; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 9px 11px; font: .91rem "DM Sans", sans-serif; }
+  .form-field input { max-width: 340px; min-height: 40px; }
+  .form-field textarea { resize: vertical; line-height: 1.5; min-height: 88px; }
   .form-field input:focus, .form-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .captcha-note { margin: 1px 0 0; color: var(--muted); font-size: .8rem; }
+  .captcha-note { margin: 1px 0 0; color: var(--muted); font-size: .76rem; }
   .captcha-box { min-height: 0; }
   .verification-help[hidden] { display: none; }
   .verification-help { border-left: 2px solid var(--accent); padding: 4px 0 4px 14px; color: var(--body-copy); font-size: .82rem; line-height: 1.5; }
   .verification-help p { margin: 0 0 11px; }
   .verification-retry { background: transparent; color: var(--text); border: 1px solid var(--line); border-radius: 3px; padding: 8px 11px; cursor: pointer; font: .7rem "DM Mono", monospace; }
   .verification-retry:hover { color: var(--accent); border-color: var(--accent); }
-  .submit-comment { justify-self: start; padding: 12px 17px; color: var(--bg); background: var(--text); border: 0; border-radius: 3px; cursor: pointer; font: .72rem "DM Mono", monospace; }
+  .submit-comment { justify-self: start; padding: 10px 14px; min-height: 40px; color: var(--bg); background: var(--text); border: 0; border-radius: 3px; cursor: pointer; font: .7rem "DM Mono", monospace; }
   .submit-comment:hover:not(:disabled) { background: var(--accent); }
-  .engagement-feedback { font-size: .81rem; color: var(--muted); min-height: 1.4rem; margin: 16px 0 0; }
+  .engagement-feedback { font-size: .78rem; color: var(--muted); min-height: 1.2rem; margin: 12px 0 0; }
   .engagement-feedback[data-error="true"] { color: var(--accent); }
   .spam-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   @media (max-width: 620px) {
