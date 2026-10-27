@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, render } from "astro:content";
 import { resolveProjectEmbed } from "../../utils/projectEmbeds.mjs";
+import Engagement from "../../components/Engagement.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -99,6 +100,7 @@ const prettyDate = project.data.date?.toLocaleDateString("en-US", {
       <Content />
     </div>
 
+    <Engagement kind="portfolio" slug={project.data.slug || project.id} />
     <hr class="rule" />
     <a class="back-link" href="/portfolio/">← Back to portfolio</a>
   </article>
