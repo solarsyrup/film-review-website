@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StarRating from "../../components/StarRating.astro";
+import { getCollection } from "astro:content";
+
+const items = (await getCollection("diary")).sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
+const dateLabel = (date: Date) => date.toLocaleDateString("en-US", { month:"short",day:"numeric",year:"numeric",timeZone:"UTC" });
+---
+<BaseLayout title="The Diary" description="A running log of what I've watched, read, played, and listened to.">
+  <div class="shell">
+    <section class="hero">
+      <div class="eyebrow">An ongoing record</div>
+      <h1>The Diary.</h1>
+      <p>Brief notes on what I've been watching, listening to, reading, and playing. Not everything needs a full review.</p>
+    </section>
+    <section aria-label="Diary entries">
+      <div class="section-heading">
+        <h2>Recent experiences</h2>
+        <span class="review-meta">{items.length} entries</span>
+      </div>
+      {items.length ? <div class="diary-entries">
+        {items.map((item) => <article class="diary-item" id={item.data.slug || item.id}>
+          {item.data.cover && <img class="diary-art" src={item.data.cover} alt={`Cover for ${item.data.title}`} loading="lazy" />}
+          <div class="diary-content">
+            <div class="review-meta">{dateLabel(item.data.date)} · {item.data.medium}{item.data.year ? ` · ${item.data.year}` : ""}</div>
+            <h3>{item.data.title}</h3>
+            {item.data.creator && <p class="diary-creator">{item.data.creator}</p>}
+            {item.data.rating != null && <div class="diary-rating"><StarRating value={item.data.rating} /></div>}
+            {item.data.note && <p class="diary-note">{item.data.note}</p>}
+            {item.data.reviewUrl?.startsWith("/") && <a class="text-link review-meta" href={item.data.reviewUrl}>Read full review ↗</a>}
+          </div>
+        </article>)}
+      </div> : <p class="empty">The diary is empty for now. New notes added through Pages CMS will appear here.</p>}
+    </section>
+  </div>
+</BaseLayout>
+<style>
+ .diary-entries{margin-top:18px}
+ .diary-item{border-top:1px solid var(--line);padding:25px 0;display:flex;align-items:flex-start;gap:23px}
+ .diary-art{width:104px;max-height:150px;object-fit:cover;background:var(--surface);flex:none}
+ .diary-content{flex:1;min-width:0}
+ .diary-content h3{font-size:1.75rem;margin:7px 0}
+ .diary-creator{color:var(--muted);font-size:.84rem;margin-bottom:8px}
+ .diary-rating{margin:9px 0}
+ .diary-note{color:var(--body-copy);font-size:.94rem;white-space:pre-wrap;overflow-wrap:anywhere}
+ @media(max-width:620px){.diary-item{gap:15px}.diary-art{width:76px}}
+</style>
