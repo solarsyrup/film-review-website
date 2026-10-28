@@ -40,6 +40,17 @@ content:
       - name: rating
         label: Rating (out of 5)
         type: number
+      - name: medium
+        label: Medium (optional)
+        type: select
+        options:
+          values: [Film, TV, Music, Game, Book, Other]
+      - name: cover
+        label: Cover / Poster for Archive (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
       - name: summary
         label: Short Summary (optional)
         type: text
@@ -81,6 +92,18 @@ content:
         label: Closing Note
         type: text
         description: "The sentence below the reviews."
+      - name: currentlyWatching
+        label: Currently Watching (optional)
+        type: string
+      - name: currentlyReading
+        label: Currently Reading (optional)
+        type: string
+      - name: currentlyListening
+        label: Currently Listening (optional)
+        type: string
+      - name: currentlyPlaying
+        label: Currently Playing (optional)
+        type: string
 
   - name: about_page
     label: About Page
@@ -218,3 +241,52 @@ content:
         type: rich-text
         options:
           media: images
+
+  - name: diary
+    label: The Diary
+    type: collection
+    path: src/content/diary
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: slug
+        label: URL Slug (lowercase-with-dashes)
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      - name: medium
+        label: Medium
+        type: select
+        required: true
+        options:
+          values: [Film, TV, Music, Game, Book, Other]
+      - name: date
+        label: Date Experienced
+        type: date
+        required: true
+      - name: year
+        label: Release Year (optional)
+        type: number
+      - name: creator
+        label: Director, Artist, or Author (optional)
+        type: string
+      - name: rating
+        label: Rating out of 5 (optional)
+        type: number
+      - name: cover
+        label: Cover or Poster (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
+      - name: note
+        label: Brief Thoughts
+        type: text
+      - name: reviewUrl
+        label: Full Review Link (optional)
+        type: string
+        description: "Use a site path like /reviews/clayface-review/ — leave blank if there's no full review."
