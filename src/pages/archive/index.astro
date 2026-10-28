@@ -21,14 +21,10 @@ const years = [...new Set(records.map((entry)=>entry.year).filter(Boolean))].sor
     <p class="review-meta"><a href="/diary/" class="archive-link">Open the diary ↗</a> · <a href="/search/" class="archive-link">Search the entire site ↗</a></p>
   </section>
   <div class="archive-tools">
-    <label for="archive-query">Find something</label>
-    <input id="archive-query" type="search" placeholder="Title, creator, or a thought…" autocomplete="off" />
-    <label for="archive-medium">Medium</label>
-    <select id="archive-medium"><option value="">All media</option>{mediums.map((m)=><option value={m}>{m}</option>)}</select>
-    <label for="archive-year">Year</label>
-    <select id="archive-year"><option value="">All years</option>{years.map((y)=><option value={String(y)}>{y}</option>)}</select>
-    <label for="archive-order">Sort</label>
-    <select id="archive-order"><option value="recent">Newest logged</option><option value="rating">Highest rated</option><option value="title">Title A–Z</option></select>
+    <div class="filter-field"><label for="archive-query">Find something</label><input id="archive-query" type="search" placeholder="Title or creator…" autocomplete="off" /></div>
+    <div class="filter-field"><label for="archive-medium">Medium</label><select id="archive-medium"><option value="">All media</option>{mediums.map((m)=><option value={m}>{m}</option>)}</select></div>
+    <div class="filter-field"><label for="archive-year">Year</label><select id="archive-year"><option value="">All years</option>{years.map((y)=><option value={String(y)}>{y}</option>)}</select></div>
+    <div class="filter-field"><label for="archive-order">Sort</label><select id="archive-order"><option value="recent">Newest logged</option><option value="rating">Highest rated</option><option value="title">Title A–Z</option></select></div>
   </div>
   <div class="section-heading"><h2>Everything</h2><span class="review-meta" id="archive-count">{records.length} entries</span></div>
   <div id="archive-grid" class="archive-grid">
@@ -76,8 +72,8 @@ const years = [...new Set(records.map((entry)=>entry.year).filter(Boolean))].sor
 <style>
  .archive-link{color:var(--accent);border-bottom:1px solid var(--line)}
  .archive-tools{display:grid;grid-template-columns:minmax(0,2fr) 1fr 1fr 1fr;gap:8px 12px;margin:0 0 44px}
+ .filter-field{display:grid;gap:7px;align-content:start}
  .archive-tools label{font:.65rem "DM Mono",monospace;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
- .archive-tools label:first-child{grid-column:1;grid-row:1}
  .archive-tools input,.archive-tools select{min-width:0;width:100%;padding:10px;background:var(--surface);color:var(--text);border:1px solid var(--line);font: .8rem "DM Sans",sans-serif}
  .archive-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 20px;margin-top:20px}
  .archive-item{display:block;min-width:0}
