@@ -11,6 +11,8 @@ const reviews = defineCollection({
     date: z.coerce.date().optional(),
     rating: z.number().min(0).max(5).optional(),
     summary: z.string().optional(),
+    medium: z.enum(["Film", "TV", "Music", "Game", "Book", "Other"]).optional(),
+    cover: z.string().optional(),
   }),
 });
 
@@ -24,6 +26,10 @@ const pages = defineCollection({
     intro: z.string().optional(),
     sectionHeading: z.string().optional(),
     closingNote: z.string().optional(),
+    currentlyWatching: z.string().optional(),
+    currentlyReading: z.string().optional(),
+    currentlyListening: z.string().optional(),
+    currentlyPlaying: z.string().optional(),
   }),
 });
 
@@ -47,4 +53,20 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { reviews, pages, projects };
+const diary = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/diary" }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string().optional(),
+    medium: z.enum(["Film", "TV", "Music", "Game", "Book", "Other"]),
+    date: z.coerce.date(),
+    year: z.number().optional(),
+    rating: z.number().min(0).max(5).optional(),
+    creator: z.string().optional(),
+    cover: z.string().optional(),
+    note: z.string().optional(),
+    reviewUrl: z.string().optional(),
+  }),
+});
+
+export const collections = { reviews, pages, projects, diary };
