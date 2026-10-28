@@ -21,6 +21,18 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
       <p>{home?.data.intro ?? "A personal journal of movies, images, and ideas that stay with you after the screen goes dark."}</p>
       {HomeContent && <div class="page-copy"><HomeContent /></div>}
     </section>
+    {(home?.data.currentlyWatching || home?.data.currentlyReading || home?.data.currentlyListening || home?.data.currentlyPlaying) && (
+      <section class="currently" aria-label="Currently experiencing">
+        <div class="eyebrow">At the moment</div>
+        <h2>Currently experiencing.</h2>
+        <div class="currently-grid">
+          {home?.data.currentlyWatching && <p><span>Watching</span>{home.data.currentlyWatching}</p>}
+          {home?.data.currentlyReading && <p><span>Reading</span>{home.data.currentlyReading}</p>}
+          {home?.data.currentlyListening && <p><span>Listening</span>{home.data.currentlyListening}</p>}
+          {home?.data.currentlyPlaying && <p><span>Playing</span>{home.data.currentlyPlaying}</p>}
+        </div>
+      </section>
+    )}
     <section aria-labelledby="latest">
       <div class="section-heading">
         <h2 id="latest">{home?.data.sectionHeading ?? "Recent writing"}</h2>
@@ -48,3 +60,11 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
     <p class="muted">{home?.data.closingNote ?? "A living archive of things seen, felt, and thought."}</p>
   </div>
 </BaseLayout>
+<style>
+.currently{border-top:1px solid var(--line);margin-bottom:47px;padding-top:22px}
+.currently h2{font-size:1.7rem;margin:6px 0 19px}
+.currently-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 28px}
+.currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0}
+.currently-grid span{display:block;font:.65rem "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+@media(max-width:620px){.currently-grid{grid-template-columns:1fr}}
+</style>
