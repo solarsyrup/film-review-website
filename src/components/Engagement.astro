@@ -296,6 +296,7 @@ const { kind, slug, guestbook = false } = Astro.props;
   .like-button { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 9px 12px; min-height: 40px; cursor: pointer; white-space: nowrap; font: .7rem "DM Mono", monospace; }
   .like-button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
   .like-button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+  .like-button[hidden] { display: none; }
   .like-button:disabled, .submit-comment:disabled { opacity: .5; cursor: not-allowed; }
   [data-heart] { color: var(--accent); font-size: 1.2rem; line-height: 1; }
   .like-count { border-left: 1px solid var(--line); padding-left: 8px; }
