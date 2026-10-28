@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+const [reviews,projects,diary]=await Promise.all([getCollection("reviews"),getCollection("projects"),getCollection("diary")]);
+const paths=[
+  ...reviews.map(r=>`/reviews/${r.data.slug||r.id}/`),
+  ...projects.map(p=>`/portfolio/${p.data.slug||p.id}/`),
+  ...diary.map(d=>`/diary/#${d.data.slug||d.id}`),
+];
+---
+<BaseLayout title="Surprise me" description="Find a random entry from After the Credits.">
+ <div class="shell">
+  <section class="hero">
+   <div class="eyebrow">Something from the archive</div>
+   <h1>Surprise me.</h1>
+   <p id="random-status">Finding an entry for you…</p>
+   <p><a class="text-link review-meta" href="/archive/">Browse the archive instead ↗</a></p>
+  </section>
+ </div>
+</BaseLayout>
+<script define:vars={{ paths }}>
+  if (paths.length) {
+    const randomIndex = Math.floor(Math.random() * paths.length);
+    window.location.replace(paths[randomIndex]);
+  } else {
+    document.getElementById("random-status").textContent = "The archive is empty for now.";
+  }
+</script>
