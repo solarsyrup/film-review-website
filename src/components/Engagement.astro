@@ -1,18 +1,19 @@
 ---
 interface Props {
-  kind: "review" | "portfolio";
+  kind: "review" | "portfolio" | "guestbook";
   slug: string;
+  guestbook?: boolean;
 }
-const { kind, slug } = Astro.props;
+const { kind, slug, guestbook = false } = Astro.props;
 ---
 
 <section class="engagement" data-engagement data-entry={`${kind}:${slug}`} aria-label="Likes and comments">
   <div class="reaction-bar">
     <div>
-      <div class="eyebrow">Reader responses</div>
-      <h2>Thoughts & reactions</h2>
+      <div class="eyebrow">{guestbook ? "Leave your mark" : "Reader responses"}</div>
+      <h2>{guestbook ? "The guestbook." : "Thoughts & reactions"}</h2>
     </div>
-    <button type="button" class="like-button" data-like disabled aria-pressed="false">
+    <button type="button" class="like-button" data-like disabled aria-pressed="false" hidden={guestbook}>
       <span data-heart aria-hidden="true">♡</span>
       <span data-like-label>Like</span>
       <span data-like-count class="like-count">0</span>
@@ -21,7 +22,7 @@ const { kind, slug } = Astro.props;
 
   <div class="comment-heading">
     <h3>Comments <span data-comment-count class="comment-count"></span></h3>
-    <p>Choose any display name. Comments appear after approval.</p>
+    <p>{guestbook ? "Say hello or leave a recommendation. Messages appear after approval." : "Choose any display name. Comments appear after approval."}</p>
   </div>
   <div class="comments-list" data-comments aria-live="polite">
     <p class="quiet">Loading discussion…</p>
@@ -34,7 +35,7 @@ const { kind, slug } = Astro.props;
     </div>
     <div class="form-field">
       <label for={`atc-body-${kind}-${slug}`}>Your comment</label>
-      <textarea id={`atc-body-${kind}-${slug}`} name="body" minlength="3" maxlength="1600" rows="3" placeholder="What did you think?" required></textarea>
+      <textarea id={`atc-body-${kind}-${slug}`} name="body" minlength="3" maxlength="1600" rows="3" placeholder={guestbook ? "Leave a message…" : "What did you think?"} required></textarea>
     </div>
     <div class="spam-field" aria-hidden="true">
       <label>Leave this field blank <input name="website" autocomplete="off" tabindex="-1" /></label>
