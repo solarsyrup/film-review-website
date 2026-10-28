@@ -1,0 +1,14 @@
+---
+interface Props { label?: string }
+const { label = "Reveal spoiler" } = Astro.props;
+---
+<details class="spoiler">
+  <summary>{label}</summary>
+  <div class="spoiler-content"><slot /></div>
+</details>
+<style>
+  .spoiler { margin: 1.6em 0; border: 1px solid var(--line); background: var(--surface); padding: 10px 16px; border-radius: 3px; }
+  .spoiler summary { cursor: pointer; font: .75rem "DM Mono", monospace; color: var(--accent); letter-spacing: .03em; }
+  .spoiler-content { padding-top: 15px; color: var(--body-copy); }
+  .spoiler-content :global(p:last-child) { margin-bottom: 0; }
+</style>
