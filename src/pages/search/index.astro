@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+const [reviews,projects,diary]=await Promise.all([getCollection("reviews"),getCollection("projects"),getCollection("diary")]);
+const entries=[
+...reviews.map(r=>({type:"Journal",title:r.data.title,description:r.data.summary||"",detail:[r.data.director,r.data.year].filter(Boolean).join(" · "),url:`/reviews/${r.data.slug||r.id}/`})),
+...projects.map(p=>({type:"Portfolio",title:p.data.title,description:p.data.description||"",detail:[p.data.category,p.data.year].filter(Boolean).join(" · "),url:`/portfolio/${p.data.slug||p.id}/`})),
+...diary.map(d=>({type:"Diary",title:d.data.title,description:d.data.note||"",detail:[d.data.creator,d.data.medium,d.data.year].filter(Boolean).join(" · "),url:`/diary/#${d.data.slug||d.id}`}))
+];
+---
+<BaseLayout title="Search" description="Search After the Credits reviews, diary notes, and projects.">
+<div class="shell">
+ <section class="hero">
+  <div class="eyebrow">Find your way around</div>
+  <h1>Search.</h1>
+  <p>Look through the journal, portfolio, and diary.</p>
+ </section>
+ <div class="find-wrap">
+  <label for="find-query">Search the site</label>
+  <input id="find-query" type="search" placeholder="A film, a project, a thought…" autofocus autocomplete="off" />
+ </div>
+ <p class="review-meta" id="find-status">{entries.length} entries</p>
+ <div id="find-results">
+  {entries.map(item=><a class="find-result" href={item.url} data-search={[item.type,item.title,item.detail,item.description].join(" ").toLowerCase()}>
+   <span class="eyebrow">{item.type}{item.detail?" · "+item.detail:""}</span>
+   <h2>{item.title}</h2>
+   {item.description&&<p>{item.description}</p>}
+  </a>)}
+ </div>
+ <p class="empty" id="find-empty" hidden>No matching entries. Try another term.</p>
+</div>
+</BaseLayout>
+<script>
+const search=document.getElementById("find-query");
+const results=[...document.querySelectorAll(".find-result")];
+const status=document.getElementById("find-status");
+const empty=document.getElementById("find-empty");
+function update(){
+ const q=search.value.trim().toLocaleLowerCase();
+ let count=0;
+ for(const el of results){const show=el.dataset.search.includes(q);el.hidden=!show;if(show)count++;}
+ status.textContent=count+" matching entries";
+ empty.hidden=count>0;
+}
+const startingQuery=new URLSearchParams(window.location.search).get("q");
+if(startingQuery) search.value=startingQuery.slice(0,200);
+search.addEventListener("input",update);
+update();
+</script>
+<style>
+.find-wrap{display:grid;gap:8px;max-width:650px;margin-bottom:18px}
+.find-wrap label{color:var(--muted);font:.72rem "DM Mono",monospace}
+.find-wrap input{background:var(--surface);color:var(--text);border:1px solid var(--line);padding:14px 16px;font:1rem "DM Sans",sans-serif}
+#find-results{margin-top:22px}
+.find-result{display:block;border-top:1px solid var(--line);padding:18px 0}
+.find-result[hidden],#find-empty[hidden]{display:none}
+.find-result h2{font-size:1.75rem;margin:6px 0}
+.find-result p{color:var(--body-copy);font-size:.93rem;margin-bottom:0;max-width:690px}
+</style>
