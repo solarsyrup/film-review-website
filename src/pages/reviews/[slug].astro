@@ -33,8 +33,19 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
     <div class="article-body">
       <Content />
     </div>
+    {review.data.spoilerText && (
+      <details class="spoiler-section">
+        <summary>{review.data.spoilerHeading || "Reveal spoilers"}</summary>
+        <div class="spoiler-copy">{review.data.spoilerText}</div>
+      </details>
+    )}
     <Engagement kind="review" slug={review.data.slug || review.id} />
     <hr class="rule" />
     <a class="back-link" href="/">← More writing</a>
   </article>
 </BaseLayout>
+<style>
+.spoiler-section{max-width:690px;margin:24px 0;padding:13px 17px;background:var(--surface);border:1px solid var(--line)}
+.spoiler-section summary{color:var(--accent);cursor:pointer;font:.75rem "DM Mono",monospace;letter-spacing:.04em}
+.spoiler-copy{padding-top:15px;white-space:pre-wrap;color:var(--body-copy);font-size:1rem;line-height:1.72;overflow-wrap:anywhere}
+</style>
