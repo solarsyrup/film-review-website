@@ -111,7 +111,7 @@ export async function ipActor(request, secret) {
 }
 
 export async function validEntry(env, request, entryKey) {
-  if (typeof entryKey !== "string" || !/^(review|portfolio):[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/.test(entryKey)) return false;
+  if (typeof entryKey !== "string" || !/^(review|portfolio|guestbook):[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/.test(entryKey)) return false;
   const [kind, slug] = entryKey.split(":");
   const sourceUrl = new URL("/interaction-entries.json", request.url);
   const res = await env.ASSETS.fetch(new Request(sourceUrl, { method: "GET" }));
