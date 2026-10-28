@@ -12,6 +12,7 @@ export const GET: APIRoute = async () => {
   const manifest = {
     review: reviews.map((item) => item.data.slug || item.id),
     portfolio: projects.map((item) => item.data.slug || item.id),
+    guestbook: ["main"],
   };
   return new Response(JSON.stringify(manifest), {
     headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "public, max-age=300" },
