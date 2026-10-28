@@ -1,0 +1,91 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StarRating from "../../components/StarRating.astro";
+import { getCollection } from "astro:content";
+
+const [reviews, diary] = await Promise.all([getCollection("reviews"),getCollection("diary")]);
+const records = [
+  ...reviews.map((r) => ({ kind: "Review", medium: r.data.medium || "Film", title:r.data.title, creator:r.data.director || "",year:r.data.year,date:r.data.date?.getTime() || 0,rating:r.data.rating,cover:r.data.cover,url:`/reviews/${r.data.slug || r.id}/`,note:r.data.summary || "" })),
+  ...diary.map((d) => ({ kind: "Diary", medium:d.data.medium,title:d.data.title,creator:d.data.creator || "",year:d.data.year,date:d.data.date.getTime(),rating:d.data.rating,cover:d.data.cover,url:`/diary/#${d.data.slug || d.id}`,note:d.data.note || "" })),
+].sort((a,b)=>b.date-a.date);
+
+const mediums = [...new Set(records.map((entry)=>entry.medium))].sort();
+const years = [...new Set(records.map((entry)=>entry.year).filter(Boolean))].sort((a,b)=>b-a);
+---
+<BaseLayout title="The Archive" description="Explore reviews and diary notes from After the Credits.">
+<div class="shell">
+  <section class="hero">
+    <div class="eyebrow">Collected experiences</div>
+    <h1>The Archive.</h1>
+    <p>A running index of the art I've encountered, from full reviews to passing notes in the diary.</p>
+    <p class="review-meta"><a href="/diary/" class="archive-link">Open the diary ↗</a> · <a href="/search/" class="archive-link">Search the entire site ↗</a></p>
+  </section>
+  <div class="archive-tools">
+    <label for="archive-query">Find something</label>
+    <input id="archive-query" type="search" placeholder="Title, creator, or a thought…" autocomplete="off" />
+    <label for="archive-medium">Medium</label>
+    <select id="archive-medium"><option value="">All media</option>{mediums.map((m)=><option value={m}>{m}</option>)}</select>
+    <label for="archive-year">Year</label>
+    <select id="archive-year"><option value="">All years</option>{years.map((y)=><option value={String(y)}>{y}</option>)}</select>
+    <label for="archive-order">Sort</label>
+    <select id="archive-order"><option value="recent">Newest logged</option><option value="rating">Highest rated</option><option value="title">Title A–Z</option></select>
+  </div>
+  <div class="section-heading"><h2>Everything</h2><span class="review-meta" id="archive-count">{records.length} entries</span></div>
+  <div id="archive-grid" class="archive-grid">
+    {records.map((item) => <a
+       class="archive-item" href={item.url}
+       data-search={[item.title,item.creator,item.note].join(" ").toLocaleLowerCase()}
+       data-medium={item.medium}
+       data-year={item.year || ""}
+       data-date={item.date}
+       data-rating={item.rating ?? -1}
+       data-title={item.title.toLocaleLowerCase()}
+    >
+      <div class="archive-art">
+        {item.cover ? <img src={item.cover} alt="" loading="lazy" /> : <span>{item.medium}</span>}
+      </div>
+      <div class="review-meta">{item.kind} · {item.medium}{item.year ? ` · ${item.year}` : ""}</div>
+      <h3>{item.title}</h3>
+      {item.creator && <p class="archive-creator">{item.creator}</p>}
+      {item.rating != null && <div class="archive-rating"><StarRating value={item.rating}/></div>}
+    </a>)}
+  </div>
+  <p id="archive-empty" class="empty" hidden>No entries match those filters.</p>
+</div>
+</BaseLayout>
+<script>
+  const query=document.getElementById("archive-query");
+  const medium=document.getElementById("archive-medium");
+  const year=document.getElementById("archive-year");
+  const order=document.getElementById("archive-order");
+  const grid=document.getElementById("archive-grid");
+  const nodes=[...grid.querySelectorAll(".archive-item")];
+  const count=document.getElementById("archive-count");
+  const empty=document.getElementById("archive-empty");
+  function applyFilters(){
+    const q=query.value.trim().toLocaleLowerCase();
+    const shown=nodes.filter(el=>(!q||el.dataset.search.includes(q))&&(!medium.value||el.dataset.medium===medium.value)&&(!year.value||el.dataset.year===year.value));
+    shown.sort((a,b)=>order.value==="rating"? Number(b.dataset.rating)-Number(a.dataset.rating):order.value==="title"?a.dataset.title.localeCompare(b.dataset.title):Number(b.dataset.date)-Number(a.dataset.date));
+    grid.replaceChildren(...shown,...nodes.filter(el=>!shown.includes(el)));
+    for(const el of nodes)el.hidden=!shown.includes(el);
+    count.textContent=shown.length+" entries";
+    empty.hidden=shown.length!==0;
+  }
+  for(const input of [query,medium,year,order])input.addEventListener("input",applyFilters);
+</script>
+<style>
+ .archive-link{color:var(--accent);border-bottom:1px solid var(--line)}
+ .archive-tools{display:grid;grid-template-columns:minmax(0,2fr) 1fr 1fr 1fr;gap:8px 12px;margin:0 0 44px}
+ .archive-tools label{font:.65rem "DM Mono",monospace;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
+ .archive-tools label:first-child{grid-column:1;grid-row:1}
+ .archive-tools input,.archive-tools select{min-width:0;width:100%;padding:10px;background:var(--surface);color:var(--text);border:1px solid var(--line);font: .8rem "DM Sans",sans-serif}
+ .archive-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 20px;margin-top:20px}
+ .archive-item{display:block;min-width:0}
+ .archive-item[hidden]{display:none}
+ .archive-art{aspect-ratio:3/4;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:13px;color:var(--muted);font:1.55rem "Newsreader",serif}
+ .archive-art img{width:100%;height:100%;object-fit:cover}
+ .archive-item h3{font-size:1.45rem;margin:7px 0}
+ .archive-creator{font-size:.78rem;color:var(--muted);margin:0}
+ .archive-rating{margin-top:8px}
+ @media(max-width:620px){.archive-tools{grid-template-columns:1fr 1fr}.archive-tools label:first-child{grid-column:1;grid-row:auto}.archive-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}}
+</style>
