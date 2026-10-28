@@ -13,6 +13,8 @@ const reviews = defineCollection({
     summary: z.string().optional(),
     medium: z.enum(["Film", "TV", "Music", "Game", "Book", "Other"]).optional(),
     cover: z.string().optional(),
+    spoilerHeading: z.string().optional(),
+    spoilerText: z.string().optional(),
   }),
 });
 
