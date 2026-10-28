@@ -58,6 +58,14 @@ content:
         label: Review Text
         type: rich-text
         description: "Write only your review here. The title, director, date and rating are displayed separately above it."
+      - name: spoilerHeading
+        label: Spoiler Button Text (optional)
+        type: string
+        description: "For example, Spoilers for the ending. Only shown if Spoiler Text is filled in."
+      - name: spoilerText
+        label: Hidden Spoiler Section (optional)
+        type: text
+        description: "Any text here is hidden behind a click-to-reveal spoiler button."
 
   - name: homepage
     label: Homepage
