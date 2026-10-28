@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Engagement from "../../components/Engagement.astro";
+---
+<BaseLayout title="Guestbook" description="Leave a message on After the Credits.">
+ <div class="shell">
+  <section class="hero">
+   <div class="eyebrow">An old-internet tradition</div>
+   <h1>The Guestbook.</h1>
+   <p>Passing through? Say hello, leave a recommendation, or tell me what you've been enjoying lately.</p>
+  </section>
+  <div class="guestbook-note">Messages are reviewed before they're published. Be decent to each other.</div>
+  <Engagement kind="guestbook" slug="main" guestbook={true} />
+ </div>
+</BaseLayout>
+<style>
+.guestbook-note{max-width:620px;color:var(--muted);font-size:.82rem;border-bottom:1px solid var(--line);padding-bottom:18px}
+</style>
