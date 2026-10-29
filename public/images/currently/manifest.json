@@ -8,5 +8,10 @@
     "query": "{\"creator\": \"Hirohiko Araki\", \"isbn\": null, \"kind\": \"reading\", \"title\": \"JoJolion\", \"volume\": 8, \"year\": null}",
     "cover": "/images/currently/reading.jpg",
     "source": "Open Library"
+  },
+  "listening": {
+    "query": "{\"creator\": \"Masayoshi Takanaka\", \"isbn\": null, \"kind\": \"listening\", \"title\": \"ALL OF ME\", \"volume\": null, \"year\": null}",
+    "cover": "/images/currently/listening.jpg",
+    "source": "MusicBrainz / Cover Art Archive"
   }
 }
