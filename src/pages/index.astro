@@ -34,7 +34,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
             {home.data.currentlyReadingCover && <img src={home.data.currentlyReadingCover} alt={`Cover for ${home.data.currentlyReading}`} loading="lazy" decoding="async" />}
             <div><span>Reading</span><p>{home.data.currentlyReading}</p></div>
           </div>}
-          {home?.data.currentlyListening && <div class="currently-item">
+          {home?.data.currentlyListening && <div class="currently-item currently-item--album">
             {home.data.currentlyListeningCover && <img src={home.data.currentlyListeningCover} alt={`Artwork for ${home.data.currentlyListening}`} loading="lazy" decoding="async" />}
             <div><span>Listening</span><p>{home.data.currentlyListening}</p></div>
           </div>}
@@ -79,6 +79,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
 .currently-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 28px}
 .currently-item{display:flex;align-items:flex-start;gap:13px;min-width:0}
 .currently-item img{display:block;width:74px;height:108px;flex:none;object-fit:cover;background:var(--surface);border:1px solid var(--line);border-radius:2px}
+.currently-item--album img{width:94px;height:94px;aspect-ratio:1 / 1;object-fit:cover}
 .currently-item > div{min-width:0}
 .currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0;overflow-wrap:anywhere}
 .currently-grid span{display:block;font:.65rem "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
