@@ -145,6 +145,43 @@ content:
         options:
           media: images
           rename: safe
+      - name: currentlyWatchingType
+        label: Watching - Type
+        type: select
+        default: TV
+        options:
+          values: [TV, Film]
+      - name: currentlyWatchingYear
+        label: Watching - Original Release Year (optional)
+        type: number
+        description: "Helps match shows and movies with similar names."
+      - name: currentlyReadingAuthor
+        label: Reading - Author (optional)
+        type: string
+        description: "Helps match books, manga, and comics."
+      - name: currentlyListeningArtist
+        label: Listening - Music Artist (optional)
+        type: string
+        description: "Helps identify the correct album or EP."
+      - name: currentlyPlayingYear
+        label: Playing - Release Year (optional)
+        type: number
+      - name: currentlyWatchingAutoArtwork
+        label: Watching - Automatically Find Artwork
+        type: boolean
+        default: true
+      - name: currentlyReadingAutoArtwork
+        label: Reading - Automatically Find Artwork
+        type: boolean
+        default: true
+      - name: currentlyListeningAutoArtwork
+        label: Listening - Automatically Find Artwork
+        type: boolean
+        default: true
+      - name: currentlyPlayingAutoArtwork
+        label: Playing - Automatically Find Artwork
+        type: boolean
+        default: true
 
   - name: about_page
     label: About Page
