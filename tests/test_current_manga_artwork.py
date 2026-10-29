@@ -46,6 +46,31 @@ class MangaArtworkTests(unittest.TestCase):
         self.assertEqual(fetch.call_count, 1)
 
     @patch.object(art, "get_json")
+    def test_jojolion_vol8_uses_verified_isbn_if_open_library_lacks_it(self, fetch):
+        def fake(url, headers=None):
+            if "openlibrary.org" in url:
+                return {"docs": [{"title": "JoJolion Vol. 1", "cover_i": 11}]}
+            if "googleapis.com" in url:
+                return {"items": [{"volumeInfo": {
+                    "industryIdentifiers": [{"type": "ISBN_13", "identifier": "9784088802381"}],
+                    "imageLinks": {"thumbnail": "http://books.google.com/books/content?id=abc"},
+                }}]}
+            self.fail("Unexpected metadata lookup " + url)
+        fetch.side_effect = fake
+        self.assertEqual(
+            art.reading_art({"currentlyReading": "JoJolion - Hirohiko Araki", "currentlyReadingVolume": 8}),
+            "https://books.google.com/books/content?id=abc",
+        )
+
+    @patch.object(art, "get_json")
+    def test_edition_cover_rejects_different_isbn(self, fetch):
+        fetch.return_value = {"items": [{"volumeInfo": {
+            "industryIdentifiers": [{"type": "ISBN_13", "identifier": "9784088802382"}],
+            "imageLinks": {"thumbnail": "https://books.google.com/books/content?id=wrong"},
+        }}]}
+        self.assertIsNone(art.isbn_cover("9784088802381"))
+
+    @patch.object(art, "get_json")
     def test_default_to_first_volume(self, fetch):
         fetch.return_value = {"docs": [
             {"title": "JoJolion Vol. 6", "cover_i": 66},
