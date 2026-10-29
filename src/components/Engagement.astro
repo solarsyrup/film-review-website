@@ -7,8 +7,8 @@ interface Props {
 const { kind, slug, guestbook = false } = Astro.props;
 ---
 
-<section class="engagement" data-engagement data-entry={`${kind}:${slug}`} aria-label="Likes and comments">
-  <div class="reaction-bar">
+<section class:list={["engagement", { "engagement-guestbook": guestbook }]} data-engagement data-entry={`${kind}:${slug}`} aria-label={guestbook ? "Guestbook messages" : "Likes and comments"}>
+  <div class="reaction-bar" hidden={guestbook}>
     <div>
       <div class="eyebrow">{guestbook ? "Leave your mark" : "Reader responses"}</div>
       <h2>{guestbook ? "The guestbook." : "Thoughts & reactions"}</h2>
@@ -21,7 +21,7 @@ const { kind, slug, guestbook = false } = Astro.props;
   </div>
 
   <div class="comment-heading">
-    <h3>Comments <span data-comment-count class="comment-count"></span></h3>
+    <h3>{guestbook ? "Messages" : "Comments"} <span data-comment-count class="comment-count"></span></h3>
     <p>{guestbook ? "Say hello or leave a recommendation. Messages appear after approval." : "Choose any display name. Comments appear after approval."}</p>
   </div>
   <div class="comments-list" data-comments aria-live="polite">
@@ -29,24 +29,29 @@ const { kind, slug, guestbook = false } = Astro.props;
   </div>
 
   <form class="comment-form" data-comment-form>
+    <div class="form-heading">
+      <div class="eyebrow">{guestbook ? "Your turn" : "Join the conversation"}</div>
+      <h3>{guestbook ? "Leave a message" : "Leave a comment"}</h3>
+      <p>{guestbook ? "Introduce yourself or share something worth checking out." : "Share your thoughts. Your comment will appear after approval."}</p>
+    </div>
     <div class="form-field">
       <label for={`atc-name-${kind}-${slug}`}>Display name</label>
       <input id={`atc-name-${kind}-${slug}`} name="name" maxlength="40" minlength="2" autocomplete="nickname" placeholder="Your name or nickname" required />
     </div>
     <div class="form-field">
-      <label for={`atc-body-${kind}-${slug}`}>Your comment</label>
+      <label for={`atc-body-${kind}-${slug}`}>{guestbook ? "Your message" : "Your comment"}</label>
       <textarea id={`atc-body-${kind}-${slug}`} name="body" minlength="3" maxlength="1600" rows="3" placeholder={guestbook ? "Leave a message…" : "What did you think?"} required></textarea>
     </div>
     <div class="spam-field" aria-hidden="true">
       <label>Leave this field blank <input name="website" autocomplete="off" tabindex="-1" /></label>
     </div>
-    <p class="captcha-note">Complete the verification below before liking or commenting.</p>
+    <p class="captcha-note">Verify you are human before {guestbook ? "leaving a message" : "liking or commenting"}.</p>
     <div class="captcha-box" data-captcha></div>
     <div class="verification-help" data-verification-help hidden>
       <p data-verification-detail></p>
       <button type="button" class="verification-retry" data-verification-retry>Retry verification</button>
     </div>
-    <button class="submit-comment" type="submit" disabled>Submit comment for approval</button>
+    <button class="submit-comment" type="submit" disabled>{guestbook ? "Submit message" : "Submit comment"}</button>
   </form>
   <p class="engagement-feedback" data-feedback role="status" aria-live="polite"></p>
 </section>
@@ -290,8 +295,10 @@ const { kind, slug, guestbook = false } = Astro.props;
 </script>
 
 <style>
-  .engagement { max-width: 620px; margin: 94px 0 26px; border-top: 1px solid var(--line); padding-top: 24px; }
+  .engagement { max-width: 620px; margin: 94px 0 26px; border-top: 1px solid var(--line); padding-top: 27px; }
+  .engagement-guestbook { max-width: 690px; margin: 0 0 26px; padding: 0; border-top: 0; }
   .reaction-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .reaction-bar[hidden] { display: none; }
   .reaction-bar h2 { font-size: clamp(1.5rem, 4.5vw, 1.9rem); margin: 5px 0 0; }
   .like-button { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 1px solid var(--line); color: var(--text); border-radius: 3px; padding: 9px 12px; min-height: 40px; cursor: pointer; white-space: nowrap; font: .7rem "DM Mono", monospace; }
   .like-button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
@@ -300,39 +307,48 @@ const { kind, slug, guestbook = false } = Astro.props;
   .like-button:disabled, .submit-comment:disabled { opacity: .5; cursor: not-allowed; }
   [data-heart] { color: var(--accent); font-size: 1.2rem; line-height: 1; }
   .like-count { border-left: 1px solid var(--line); padding-left: 8px; }
-  .comment-heading { margin: 26px 0 14px; }
-  .comment-heading h3 { font-size: 1.25rem; margin: 0 0 3px; }
+  .comment-heading { margin: 30px 0 18px; }
+  .comment-heading h3 { font-size: 1.55rem; margin: 0 0 5px; }
   .comment-heading p, .comment-count { font: .71rem "DM Mono", monospace; color: var(--muted); }
-  .comments-list { display: grid; gap: 0; }
-  .engagement :global(.reader-comment) { padding: 13px 0; border-top: 1px solid var(--line); }
-  .engagement :global(.comment-top) { display: flex; align-items: baseline; gap: 16px; justify-content: space-between; margin-bottom: 7px; }
-  .engagement :global(.reader-name) { font-size: .89rem; overflow-wrap: anywhere; }
-  .engagement :global(.comment-date) { color: var(--muted); font: .67rem "DM Mono", monospace; white-space: nowrap; }
-  .engagement :global(.reader-message) { font-size: .91rem; color: var(--body-copy); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
-  .engagement :global(.quiet) { color: var(--muted); font-size: .9rem; }
-  .comment-form { display: grid; gap: 11px; border-top: 1px solid var(--line); margin-top: 16px; padding-top: 18px; }
-  .form-field { display: grid; gap: 5px; }
-  .form-field label { color: var(--text); font: .68rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .06em; }
-  .form-field input, .form-field textarea { width: 100%; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 9px 11px; font: .91rem "DM Sans", sans-serif; }
-  .form-field input { max-width: 340px; min-height: 40px; }
-  .form-field textarea { resize: vertical; line-height: 1.5; min-height: 88px; }
+  .comment-count { font-size: .77rem; margin-left: 6px; }
+  .engagement-guestbook .comment-heading { margin: 0 0 19px; }
+  .comments-list { display: grid; gap: 12px; }
+  .engagement :global(.reader-comment) { padding: 18px 20px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+  .engagement :global(.comment-top) { display: flex; align-items: baseline; gap: 10px; justify-content: space-between; margin-bottom: 11px; }
+  .engagement :global(.reader-name) { font-size: .88rem; color: var(--text); overflow-wrap: anywhere; }
+  .engagement :global(.comment-date) { color: var(--muted); font: .65rem "DM Mono", monospace; white-space: nowrap; }
+  .engagement :global(.reader-message) { font-size: .91rem; color: var(--body-copy); line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .engagement :global(.quiet) { color: var(--muted); font-size: .87rem; padding: 19px 20px; margin: 0; background: var(--surface); border: 1px dashed var(--line); border-radius: 4px; }
+  .comment-form { display: grid; gap: 15px; margin-top: 37px; padding: 24px 0 0; border-top: 1px solid var(--line); }
+  .engagement-guestbook .comment-form { margin-top: 47px; padding-top: 30px; }
+  .form-heading { margin-bottom: 6px; }
+  .form-heading h3 { font-size: 1.55rem; margin: 6px 0 5px; }
+  .form-heading p { margin: 0; font-size: .84rem; color: var(--muted); }
+  .form-field { display: grid; gap: 7px; }
+  .form-field label { color: var(--text); font: .67rem "DM Mono", monospace; text-transform: uppercase; letter-spacing: .07em; }
+  .form-field input, .form-field textarea { width: 100%; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 11px 12px; font: .92rem "DM Sans", sans-serif; }
+  .form-field input { max-width: 360px; min-height: 43px; }
+  .form-field textarea { resize: vertical; line-height: 1.55; min-height: 116px; }
   .form-field input:focus, .form-field textarea:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .captcha-note { margin: 1px 0 0; color: var(--muted); font-size: .76rem; }
+  .captcha-note { border-top: 1px solid var(--line); margin: 5px 0 -5px; padding-top: 17px; color: var(--muted); font-size: .77rem; }
   .captcha-box { min-height: 0; }
   .verification-help[hidden] { display: none; }
   .verification-help { border-left: 2px solid var(--accent); padding: 4px 0 4px 14px; color: var(--body-copy); font-size: .82rem; line-height: 1.5; }
   .verification-help p { margin: 0 0 11px; }
   .verification-retry { background: transparent; color: var(--text); border: 1px solid var(--line); border-radius: 3px; padding: 8px 11px; cursor: pointer; font: .7rem "DM Mono", monospace; }
   .verification-retry:hover { color: var(--accent); border-color: var(--accent); }
-  .submit-comment { justify-self: start; padding: 10px 14px; min-height: 40px; color: var(--bg); background: var(--text); border: 0; border-radius: 3px; cursor: pointer; font: .7rem "DM Mono", monospace; }
+  .submit-comment { justify-self: start; padding: 11px 17px; min-height: 43px; color: var(--bg); background: var(--text); border: 0; border-radius: 3px; cursor: pointer; font: .72rem "DM Mono", monospace; }
   .submit-comment:hover:not(:disabled) { background: var(--accent); }
   .engagement-feedback { font-size: .78rem; color: var(--muted); min-height: 1.2rem; margin: 12px 0 0; }
   .engagement-feedback[data-error="true"] { color: var(--accent); }
   .spam-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   @media (max-width: 620px) {
     .engagement { margin-top: 72px; padding-top: 22px; }
+    .engagement-guestbook { margin-top: 0; padding-top: 0; }
     .reaction-bar { align-items: flex-start; flex-direction: column; gap: 13px; }
     .like-button { align-self: flex-start; min-height: 44px; }
     .submit-comment { min-height: 44px; }
+    .engagement :global(.reader-comment) { padding: 15px; }
+    .engagement :global(.comment-top) { align-items: flex-start; flex-wrap: wrap; }
   }
 </style>
