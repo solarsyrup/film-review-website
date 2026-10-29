@@ -120,6 +120,31 @@ content:
       - name: currentlyPlaying
         label: Currently Playing (optional)
         type: string
+      - name: currentlyWatchingCover
+        label: Currently Watching - Poster (optional)
+        type: image
+        description: "Upload a movie or television poster to display next to what you're watching."
+        options:
+          media: images
+          rename: safe
+      - name: currentlyReadingCover
+        label: Currently Reading - Cover (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
+      - name: currentlyListeningCover
+        label: Currently Listening - Album Artwork (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
+      - name: currentlyPlayingCover
+        label: Currently Playing - Game Artwork (optional)
+        type: image
+        options:
+          media: images
+          rename: safe
 
   - name: about_page
     label: About Page
