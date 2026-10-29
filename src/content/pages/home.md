@@ -16,4 +16,5 @@ currentlyWatchingAutoArtwork: true
 currentlyReadingAutoArtwork: true
 currentlyListeningAutoArtwork: true
 currentlyPlayingAutoArtwork: true
+currentlyReadingCover: "/images/currently/reading.jpg"
 ---

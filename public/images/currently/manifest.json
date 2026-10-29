@@ -3,5 +3,10 @@
     "query": "{\"creator\": null, \"isbn\": null, \"kind\": \"TV\", \"title\": \"The Sopranos\", \"volume\": null, \"year\": null}",
     "cover": "/images/currently/watching.jpg",
     "source": "TMDB"
+  },
+  "reading": {
+    "query": "{\"creator\": \"Hirohiko Araki\", \"isbn\": null, \"kind\": \"reading\", \"title\": \"JoJolion\", \"volume\": 8, \"year\": null}",
+    "cover": "/images/currently/reading.jpg",
+    "source": "Open Library"
   }
 }
