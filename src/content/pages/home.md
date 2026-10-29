@@ -8,4 +8,5 @@ intro: A journal of mostly films, but also other art I experience. The art is
   my enjoyment or "dedication" to a work or film.
 currentlyWatching: The Sopranos
 currentlyReading: JoJolion - Hirohiko Araki
+currentlyWatchingCover: "/images/currently/watching.jpg"
 ---

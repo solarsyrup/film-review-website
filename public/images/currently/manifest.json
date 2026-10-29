@@ -1,0 +1,7 @@
+{
+  "watching": {
+    "query": "{\"creator\": null, \"kind\": \"TV\", \"title\": \"The Sopranos\", \"year\": null}",
+    "cover": "/images/currently/watching.jpg",
+    "source": "TMDB"
+  }
+}
