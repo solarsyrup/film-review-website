@@ -21,13 +21,16 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
 
 <BaseLayout title={review.data.title} description={review.data.summary ?? `A review of ${review.data.title}.`}>
   <article class="shell">
-    <div class="article-head">
-      <a class="back-link" href="/">← Back to journal</a>
-      <div class="eyebrow" style="margin-top:34px">Film review</div>
-      <h1>{review.data.title}</h1>
-      <div class="review-meta">{[review.data.year, review.data.director && `Directed by ${review.data.director}`, dateLabel && `Reviewed ${dateLabel}`].filter(Boolean).join(" · ")}</div>
-      {review.data.rating != null && <div class="rating" style="margin-top:18px"><StarRating value={review.data.rating} /></div>}
-      {review.data.summary && <p class="article-summary">{review.data.summary}</p>}
+    <div class:list={["article-head", { "article-head-with-poster": Boolean(review.data.cover) }]}>
+      <div class="review-head-copy">
+        <a class="back-link" href="/">← Back to journal</a>
+        <div class="eyebrow" style="margin-top:34px">{review.data.medium || "Film"} review</div>
+        <h1>{review.data.title}</h1>
+        <div class="review-meta">{[review.data.year, review.data.director && `${review.data.medium === "TV" ? "Created by" : "Directed by"} ${review.data.director}`, dateLabel && `Reviewed ${dateLabel}`].filter(Boolean).join(" · ")}</div>
+        {review.data.rating != null && <div class="rating" style="margin-top:18px"><StarRating value={review.data.rating} /></div>}
+        {review.data.summary && <p class="article-summary">{review.data.summary}</p>}
+      </div>
+      {review.data.cover && <figure class="review-poster"><img src={review.data.cover} alt={`Poster for ${review.data.title}`} loading="eager" decoding="async" /></figure>}
     </div>
     <hr class="rule" style="margin-top:0" />
     <div class="article-body">
@@ -48,4 +51,16 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
 .spoiler-section{max-width:690px;margin:24px 0;padding:13px 17px;background:var(--surface);border:1px solid var(--line)}
 .spoiler-section summary{color:var(--accent);cursor:pointer;font:.75rem "DM Mono",monospace;letter-spacing:.04em}
 .spoiler-copy{padding-top:15px;white-space:pre-wrap;color:var(--body-copy);font-size:1rem;line-height:1.72;overflow-wrap:anywhere}
+</style>
+<style>
+.article-head-with-poster{display:grid;grid-template-columns:minmax(0,1fr) minmax(140px,210px);align-items:start;gap:28px}
+.article-head-with-poster h1{font-size:clamp(2.5rem,6vw,4.1rem)}
+.review-head-copy{min-width:0}
+.review-poster{margin:34px 0 0;width:100%;border:1px solid var(--line);background:var(--surface);overflow:hidden}
+.review-poster img{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;display:block}
+@media(max-width:620px){
+ .article-head-with-poster{grid-template-columns:minmax(0,1fr) 112px;gap:14px}
+ .review-poster{margin-top:48px}
+ .article-head-with-poster h1{font-size:clamp(2.15rem,8vw,3rem)}
+}
 </style>
