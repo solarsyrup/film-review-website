@@ -116,5 +116,45 @@ class MangaArtworkTests(unittest.TestCase):
         )
 
 
+
+class AlbumArtworkTests(unittest.TestCase):
+    def test_masayoshi_takanaka_all_of_me_verified_album(self):
+        url = art.listening_art({
+            "currentlyListening": "ALL OF ME",
+            "currentlyListeningArtist": "Masayoshi Takanaka",
+        })
+        self.assertEqual(
+            url,
+            "https://coverartarchive.org/release-group/8d700fbc-1101-4eb4-bca6-469392c9009e/front-500",
+        )
+
+    def test_artist_id_matches_japanese_artist_credit(self):
+        self.assertTrue(art.music_artist_matches({
+            "artist-credit": [{
+                "name": "高中正義",
+                "artist": {
+                    "id": "facf743e-1231-410d-bdf1-9ba11a6a4f3c",
+                    "name": "高中正義",
+                },
+            }],
+        }, "Masayoshi Takanaka"))
+
+    @patch.object(art, "get_json")
+    @patch.object(art, "image_bytes")
+    def test_missing_release_group_cover_tries_specific_release(self, download, lookup):
+        lookup.return_value = {
+            "releases": [{"id": "11111111-1111-4111-8111-111111111111"}],
+        }
+        download.return_value = (b"image", ".jpg")
+        result = art.release_artwork_fallback(
+            "https://coverartarchive.org/release-group/8d700fbc-1101-4eb4-bca6-469392c9009e/front-500"
+        )
+        self.assertEqual(result, (b"image", ".jpg"))
+        self.assertIn(
+            "/release/11111111-1111-4111-8111-111111111111/front-500",
+            download.call_args.args[0],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
