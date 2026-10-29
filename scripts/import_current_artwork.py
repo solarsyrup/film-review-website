@@ -357,7 +357,7 @@ def listening_art(meta):
 def release_artwork_fallback(group_art_url):
     """Try individual release front covers if the release-group art is missing."""
     match = re.fullmatch(
-        r"https://coverartarchive\\.org/release-group/([0-9a-fA-F-]{36})/front-500",
+        r"https://coverartarchive\.org/release-group/([0-9a-fA-F-]{36})/front-500",
         group_art_url,
     )
     if not match:
