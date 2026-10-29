@@ -193,7 +193,7 @@ def isbn_cover(isbn):
             urllib.parse.urlencode({"q": "isbn:" + isbn, "maxResults": 5})
         )
     except urllib.error.URLError:
-        return None
+        payload = {}
     for item in payload.get("items", []):
         info = item.get("volumeInfo", {})
         listed = {
