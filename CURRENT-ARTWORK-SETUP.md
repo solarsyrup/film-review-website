@@ -7,7 +7,7 @@ The homepage supports four types of automatically downloaded artwork:
 | Homepage field | Provider | Repository secret |
 | --- | --- | --- |
 | Currently Watching | [TMDB](https://www.themoviedb.org/) (movie or TV posters) | `TMDB_API_TOKEN` |
-| Currently Reading | [Open Library](https://openlibrary.org/) (book and manga covers) | None |
+| Currently Reading | [Open Library](https://openlibrary.org/) (book and manga covers), with [Jikan](https://jikan.moe/) manga series-cover fallback | None |
 | Currently Listening | [MusicBrainz](https://musicbrainz.org/) / [Cover Art Archive](https://coverartarchive.org/) (album artwork) | None |
 | Currently Playing | [RAWG](https://rawg.io/apidocs) (game cover/background art) | `RAWG_API_KEY` |
 
@@ -28,7 +28,7 @@ If the GitHub Action gets a git push 403 error, enable **Settings → Actions �
 Open **Homepage** in https://app.pagescms.org/. Fill in any of the four text fields:
 
 - **Currently Watching**: Movie or show title. Select **Watching - Type** (`TV` or `Film`; defaults to `TV`). An optional original release year helps differentiate remakes.
-- **Currently Reading**: Book title. Optionally specify **Reading - Author**. A text value like `JoJolion - Hirohiko Araki` is also recognized.
+- **Currently Reading**: Book or manga title. Optionally specify **Reading - Author**. A text value like `JoJolion - Hirohiko Araki` is also recognized. Set **Reading - Volume Number** to an exact volume, e.g. `7`; the importer will never choose a different volume. If you leave the volume blank, it prefers Volume 1, then a generic series cover if available. You can also write `JoJolion Vol. 7` in the title.
 - **Currently Listening**: Album or EP title. Set **Listening - Music Artist** for accuracy, or write `Masayoshi Takanaka — Seychelles`.
 - **Currently Playing**: Game title. Optionally set **Playing - Release Year**.
 
@@ -36,7 +36,7 @@ Each category also has:
 - **Cover**: upload custom artwork. If supplied, the importer will never overwrite it.
 - **Automatically Find Artwork**: turn off to disable lookup for that category.
 
-If you change an item's title, the importer replaces a previous *automatically managed* cover with matching artwork. If no reliable match exists, it does not choose a random cover. For obscure manga, albums, games, or alternate editions, manually upload the preferred cover.
+If you change an item's title, the importer replaces a previous *automatically managed* cover with matching artwork. If no reliable match exists, it does not choose a random cover. For obscure manga, albums, games, or alternate editions, manually upload the preferred cover. Manga fallback artwork is fetched from Jikan/MyAnimeList only when no volume is explicitly requested.
 
 ### Technical and licensing notes
 
