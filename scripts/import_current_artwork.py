@@ -108,7 +108,7 @@ def split_book_title_and_volume(title, override=None):
         number = int(override)
         if number < 1 or number > 500:
             raise ValueError("Reading volume must be between 1 and 500")
-    found = re.search(r"(?i)(?:\\bvol(?:ume)?\\.?\\s*|\\b(?:book|volume)\\s*|#)([1-9]\\d{0,2})\\b", title)
+    found = re.search(r"(?i)(?:\bvol(?:ume)?\.?\s*|\b(?:book|volume)\s*|#)([1-9]\d{0,2})\b", title)
     if found:
         if not explicit:
             number = int(found.group(1))
@@ -129,7 +129,7 @@ def reading_matches_title(candidate, title, volume):
     if not text.startswith(base + " "):
         return False
     suffix = text[len(base) + 1:]
-    found = re.fullmatch(r"(?:(?:vol|volume|book)\\s+)?([1-9]\\d{0,2})", suffix)
+    found = re.fullmatch(r"(?:(?:vol|volume|book)\s+)?([1-9]\d{0,2})", suffix)
     if not found:
         return False
     return volume is None or int(found.group(1)) == volume
@@ -148,7 +148,12 @@ def manga_series_fallback(title, author):
     for entry in data.get("data", []):
         titles = [entry.get("title"), entry.get("title_english")]
         titles += [alt.get("title") for alt in entry.get("titles", []) if isinstance(alt, dict)]
-        if not any(normalized(t) == normalized(title) for t in titles if t):
+        if not any(
+            normalized(t) == normalized(title)
+            or normalized(t).endswith(" " + normalized(title))
+            or normalized(t).endswith(" " + normalized("Part 8: " + title))
+            for t in titles if t
+        ):
             continue
         authors = [x.get("name", "") for x in entry.get("authors", [])]
         if author:
