@@ -1,0 +1,45 @@
+name: Automatically import film and TV posters
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/content/reviews/**"
+      - "src/content/diary/**"
+      - "scripts/import_posters.py"
+      - ".github/workflows/import-posters.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-posters-main
+  cancel-in-progress: false
+
+jobs:
+  fetch-posters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out site
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install metadata parser
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Import missing artwork from TMDB
+        env:
+          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
+        run: python scripts/import_posters.py
+      - name: Commit posters back to site
+        run: |
+          if ! git status --porcelain -- public/images/posters src/content/reviews src/content/diary | grep -q .; then
+            echo "No new posters needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- public/images/posters src/content/reviews src/content/diary
+          git commit -m "Automatically add missing TMDB posters"
+          git pull --rebase origin main
+          git push origin HEAD:main
