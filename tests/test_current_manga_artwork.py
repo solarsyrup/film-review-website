@@ -68,7 +68,22 @@ class MangaArtworkTests(unittest.TestCase):
             "industryIdentifiers": [{"type": "ISBN_13", "identifier": "9784088802382"}],
             "imageLinks": {"thumbnail": "https://books.google.com/books/content?id=wrong"},
         }}]}
-        self.assertIsNone(art.isbn_cover("9784088802381"))
+        # An unrelated ISBN must not inherit the verified JoJolion cover.
+        self.assertIsNone(art.isbn_cover("9784088802382"))
+
+    @patch.object(art, "get_json")
+    def test_verified_google_books_page_fallback_for_jojolion_vol8(self, fetch):
+        fetch.return_value = {"items": []}
+        url = art.isbn_cover("9784088802381")
+        self.assertIn("Kh_arQEACAAJ", url)
+        self.assertIn("printsec=frontcover", url)
+
+    @patch.object(art, "get_json")
+    def test_books_api_failure_does_not_block_verified_edition(self, fetch):
+        from urllib.error import URLError
+        fetch.side_effect = URLError("upstream unavailable")
+        url = art.isbn_cover("9784088802381")
+        self.assertIn("Kh_arQEACAAJ", url)
 
     @patch.object(art, "get_json")
     def test_default_to_first_volume(self, fetch):
