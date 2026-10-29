@@ -38,6 +38,8 @@ Each category also has:
 
 If you change an item's title, the importer replaces a previous *automatically managed* cover with matching artwork. If no reliable match exists, it does not choose a random cover. For obscure manga, albums, games, or alternate editions, manually upload the preferred cover. Manga fallback artwork is fetched from Jikan/MyAnimeList only when no volume is explicitly requested.
 
+If your reading cover still doesn't appear after a workflow run, check **Actions → Automatically import current media artwork → Fetch artwork for Currently Experiencing**. An exact volume that Open Library cannot match may be found using a verified ISBN through Google Books. The importer knows Shueisha's ISBN **9784088802381** for **JoJolion Volume 8**. To use another specific edition, fill **Reading - ISBN** with the exact ISBN shown by its publisher. If that edition has no accessible cover in either service, upload an image manually in **Currently Reading - Cover**; the workflow will not substitute a different volume.
+
 ### Technical and licensing notes
 
 The automated workflow is in `.github/workflows/import-current-artwork.yml`; the source code is in `scripts/import_current_artwork.py`. No secrets are sent to browsers. Image files are stored in the site; the public homepage shows provider credits and a RAWG link as required by RAWG's free noncommercial API.
