@@ -163,6 +163,10 @@ content:
         label: Reading - Volume Number (optional)
         type: number
         description: "For manga or graphic novels. Leave blank to prefer the first volume or the series cover. Specify a number to require that exact volume."
+      - name: currentlyReadingISBN
+        label: Reading - ISBN (optional)
+        type: string
+        description: "Use the ISBN of a particular edition if its cover isn't found by title. Leave blank normally."
       - name: currentlyListeningArtist
         label: Listening - Music Artist (optional)
         type: string
