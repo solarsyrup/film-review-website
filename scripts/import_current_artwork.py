@@ -96,10 +96,81 @@ def watching_art(meta):
     return "https://image.tmdb.org/t/p/w500" + poster
 
 
+def split_book_title_and_volume(title, override=None):
+    """Return (series/book title, requested volume, explicitly_requested).
+
+    Explicit volume in CMS or the title is authoritative: do not substitute a
+    different volume if that exact one cannot be found.
+    """
+    explicit = override is not None and override != ""
+    number = None
+    if explicit:
+        number = int(override)
+        if number < 1 or number > 500:
+            raise ValueError("Reading volume must be between 1 and 500")
+    found = re.search(r"(?i)(?:\\bvol(?:ume)?\\.?\\s*|\\b(?:book|volume)\\s*|#)([1-9]\\d{0,2})\\b", title)
+    if found:
+        if not explicit:
+            number = int(found.group(1))
+            explicit = True
+        title = (title[:found.start()] + " " + title[found.end():]).strip(" .,:;—–-() ")
+    return title.strip(), number, explicit
+
+
+def reading_matches_title(candidate, title, volume):
+    """Require the right base title and the right volume, if specified."""
+    text = normalized(candidate)
+    base = normalized(title)
+    if not text or not base:
+        return False
+    # Matches 'Jojolion', 'JoJolion Volume 1', 'JoJolion, Vol. 1', or 'JoJolion 1'.
+    if text == base:
+        return volume is None
+    if not text.startswith(base + " "):
+        return False
+    suffix = text[len(base) + 1:]
+    found = re.fullmatch(r"(?:(?:vol|volume|book)\\s+)?([1-9]\\d{0,2})", suffix)
+    if not found:
+        return False
+    return volume is None or int(found.group(1)) == volume
+
+
+def manga_series_fallback(title, author):
+    """Use a manga series' default cover only when no volume is specified."""
+    try:
+        data = get_json("https://api.jikan.moe/v4/manga?" + urllib.parse.urlencode({
+            "q": title, "limit": 12,
+        }))
+    except urllib.error.URLError as exc:
+        print("Manga fallback unavailable: " + str(exc), file=sys.stderr)
+        return None
+    candidates = []
+    for entry in data.get("data", []):
+        titles = [entry.get("title"), entry.get("title_english")]
+        titles += [alt.get("title") for alt in entry.get("titles", []) if isinstance(alt, dict)]
+        if not any(normalized(t) == normalized(title) for t in titles if t):
+            continue
+        authors = [x.get("name", "") for x in entry.get("authors", [])]
+        if author:
+            author_parts = normalized(author).split()
+            author_text = normalized(" ".join(authors))
+            if not all(part in author_text for part in author_parts):
+                # Anime databases sometimes write Japanese names surname-first.
+                continue
+        url = ((entry.get("images") or {}).get("jpg") or {}).get("large_image_url")
+        if not url:
+            url = ((entry.get("images") or {}).get("jpg") or {}).get("image_url")
+        if url:
+            parsed = urllib.parse.urlparse(url)
+            if parsed.scheme == "https" and parsed.hostname == "cdn.myanimelist.net":
+                candidates.append(url)
+    return candidates[0] if len(candidates) == 1 else None
+
+
 def reading_art(meta):
     title = str(meta["currentlyReading"]).strip()
     author = str(meta.get("currentlyReadingAuthor") or "").strip()
-    # Also recognize a common existing format such as "JoJolion - Hirohiko Araki".
+    # Recognize 'JoJolion - Hirohiko Araki' without requiring a separate field.
     if not author:
         for separator in (" — ", " - "):
             if separator in title:
@@ -107,17 +178,45 @@ def reading_art(meta):
                 if possible_title and possible_author:
                     title, author = possible_title, possible_author
                 break
-    params = {"title": title, "fields": "title,author_name,cover_i", "limit": "15"}
-    data = get_json("https://openlibrary.org/search.json?" + urllib.parse.urlencode(params))
-    result = unique_match(
-        data.get("docs", []), title, "title",
-        lambda item: bool(item.get("cover_i")) and (
-            not author or any(normalized(author) in normalized(name) for name in item.get("author_name", []))
-        ),
-    )
-    if not result:
+    title, volume, explicit = split_book_title_and_volume(title, meta.get("currentlyReadingVolume"))
+    if not title:
         return None
-    return "https://covers.openlibrary.org/b/id/" + str(int(result["cover_i"])) + "-L.jpg"
+
+    # For unspecified manga volumes, prefer Volume 1 before the series cover.
+    preferred_volume = volume if explicit else 1
+    params = {
+        "title": title, "fields": "title,author_name,cover_i",
+        "limit": "60",
+    }
+    docs = get_json("https://openlibrary.org/search.json?" + urllib.parse.urlencode(params)).get("docs", [])
+    good = []
+    for item in docs:
+        if not item.get("cover_i"):
+            continue
+        if author and not any(
+            set(normalized(author).split()).issubset(set(normalized(name).split()))
+            for name in item.get("author_name", [])
+        ):
+            continue
+        candidate_title = item.get("title", "")
+        if reading_matches_title(candidate_title, title, preferred_volume):
+            good.append(item)
+    if not good and not explicit:
+        good = [item for item in docs if item.get("cover_i") and
+                reading_matches_title(item.get("title", ""), title, None) and
+                (not author or any(
+                    set(normalized(author).split()).issubset(set(normalized(name).split()))
+                    for name in item.get("author_name", [])
+                ))]
+    if good:
+        # Multiple editions for the same book can have different cover art.
+        # Open Library search is relevance ranked; use its top exact title match.
+        return "https://covers.openlibrary.org/b/id/" + str(int(good[0]["cover_i"])) + "-L.jpg"
+
+    if explicit:
+        print(f"Reading: volume {volume} of {title} not found; refusing a different volume.")
+        return None
+    return manga_series_fallback(title, author)
 
 
 def listening_art(meta):
@@ -246,6 +345,7 @@ def main():
             "kind": meta.get("currentlyWatchingType", "TV") if category == "watching" else category,
             "year": meta.get("currentlyWatchingYear") if category == "watching" else meta.get("currentlyPlayingYear") if category == "playing" else None,
             "creator": meta.get("currentlyReadingAuthor") if category == "reading" else meta.get("currentlyListeningArtist") if category == "listening" else None,
+            "volume": meta.get("currentlyReadingVolume") if category == "reading" else None,
         }, sort_keys=True, ensure_ascii=False)
         if current_cover and current_cover == old_cover and old.get("query") == query:
             print(category + ": artwork is current.")
