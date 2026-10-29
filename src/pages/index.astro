@@ -26,10 +26,22 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
         <div class="eyebrow">At the moment</div>
         <h2>Currently experiencing.</h2>
         <div class="currently-grid">
-          {home?.data.currentlyWatching && <p><span>Watching</span>{home.data.currentlyWatching}</p>}
-          {home?.data.currentlyReading && <p><span>Reading</span>{home.data.currentlyReading}</p>}
-          {home?.data.currentlyListening && <p><span>Listening</span>{home.data.currentlyListening}</p>}
-          {home?.data.currentlyPlaying && <p><span>Playing</span>{home.data.currentlyPlaying}</p>}
+          {home?.data.currentlyWatching && <div class="currently-item">
+            {home.data.currentlyWatchingCover && <img src={home.data.currentlyWatchingCover} alt={`Poster for ${home.data.currentlyWatching}`} loading="lazy" decoding="async" />}
+            <div><span>Watching</span><p>{home.data.currentlyWatching}</p></div>
+          </div>}
+          {home?.data.currentlyReading && <div class="currently-item">
+            {home.data.currentlyReadingCover && <img src={home.data.currentlyReadingCover} alt={`Cover for ${home.data.currentlyReading}`} loading="lazy" decoding="async" />}
+            <div><span>Reading</span><p>{home.data.currentlyReading}</p></div>
+          </div>}
+          {home?.data.currentlyListening && <div class="currently-item">
+            {home.data.currentlyListeningCover && <img src={home.data.currentlyListeningCover} alt={`Artwork for ${home.data.currentlyListening}`} loading="lazy" decoding="async" />}
+            <div><span>Listening</span><p>{home.data.currentlyListening}</p></div>
+          </div>}
+          {home?.data.currentlyPlaying && <div class="currently-item">
+            {home.data.currentlyPlayingCover && <img src={home.data.currentlyPlayingCover} alt={`Artwork for ${home.data.currentlyPlaying}`} loading="lazy" decoding="async" />}
+            <div><span>Playing</span><p>{home.data.currentlyPlaying}</p></div>
+          </div>}
         </div>
       </section>
     )}
@@ -64,7 +76,10 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
 .currently{border-top:1px solid var(--line);margin-bottom:47px;padding-top:22px}
 .currently h2{font-size:1.7rem;margin:6px 0 19px}
 .currently-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 28px}
-.currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0}
+.currently-item{display:flex;align-items:flex-start;gap:13px;min-width:0}
+.currently-item img{display:block;width:74px;height:108px;flex:none;object-fit:cover;background:var(--surface);border:1px solid var(--line);border-radius:2px}
+.currently-item > div{min-width:0}
+.currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0;overflow-wrap:anywhere}
 .currently-grid span{display:block;font:.65rem "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
 @media(max-width:620px){.currently-grid{grid-template-columns:1fr}}
 </style>
