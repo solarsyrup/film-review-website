@@ -32,11 +32,11 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
           </div>}
           {home?.data.currentlyReading && <div class="currently-item">
             {home.data.currentlyReadingCover && <img src={home.data.currentlyReadingCover} alt={`Cover for ${home.data.currentlyReading}`} loading="lazy" decoding="async" />}
-            <div><span>Reading</span><p>{home.data.currentlyReading}</p></div>
+            <div><span>Reading</span><p>{home.data.currentlyReading}{home.data.currentlyReadingVolume ? ` · Vol. ${home.data.currentlyReadingVolume}` : ""}</p>{home.data.currentlyReadingAuthor && <p class="currently-credit">{home.data.currentlyReadingAuthor}</p>}</div>
           </div>}
           {home?.data.currentlyListening && <div class="currently-item currently-item--album">
             {home.data.currentlyListeningCover && <img src={home.data.currentlyListeningCover} alt={`Artwork for ${home.data.currentlyListening}`} loading="lazy" decoding="async" />}
-            <div><span>Listening</span><p>{home.data.currentlyListening}</p></div>
+            <div><span>Listening</span><p>{home.data.currentlyListening}</p>{home.data.currentlyListeningArtist && <p class="currently-credit">{home.data.currentlyListeningArtist}</p>}</div>
           </div>}
           {home?.data.currentlyPlaying && <div class="currently-item">
             {home.data.currentlyPlayingCover && <img src={home.data.currentlyPlayingCover} alt={`Artwork for ${home.data.currentlyPlaying}`} loading="lazy" decoding="async" />}
@@ -83,6 +83,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
 .currently-item > div{min-width:0}
 .currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0;overflow-wrap:anywhere}
 .currently-grid span{display:block;font:.65rem "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.currently-grid .currently-credit{font-size:.77rem;color:var(--muted);margin-top:3px;line-height:1.4}
 .artwork-credit{margin:42px 0 28px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font:.61rem "DM Mono",monospace;line-height:1.7}
 .artwork-credit a{text-decoration:underline;text-decoration-color:var(--line)}
 @media(max-width:620px){.currently-grid{grid-template-columns:1fr}}
