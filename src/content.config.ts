@@ -41,6 +41,7 @@ const pages = defineCollection({
     currentlyWatchingType: z.enum(["TV", "Film"]).optional(),
     currentlyWatchingYear: z.number().optional(),
     currentlyReadingAuthor: z.string().optional(),
+    currentlyReadingVolume: z.number().int().min(1).max(500).optional(),
     currentlyListeningArtist: z.string().optional(),
     currentlyPlayingYear: z.number().optional(),
     currentlyWatchingAutoArtwork: z.boolean().optional(),
