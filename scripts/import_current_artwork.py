@@ -174,7 +174,11 @@ def manga_series_fallback(title, author):
 
 # Official Shueisha edition identifiers for otherwise hard-to-match volumes.
 # Source: https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-880238-1
-VERIFIED_VOLUME_ISBNS = {("jojolion", 8): "9784088802381"}
+VERIFIED_VOLUME_ISBNS = {
+    ("jojolion", 8): "9784088802381",
+    # Publisher: https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-880436-1
+    ("jojolion", 10): "9784088804361",
+}
 # Google Books' publicly cataloged edition, verified by matching its ISBN and volume.
 # https://books.google.com/books/about/ジョジョリオン_8.html?id=Kh_arQEACAAJ
 VERIFIED_GOOGLE_BOOK_IDS = {"9784088802381": "Kh_arQEACAAJ"}
