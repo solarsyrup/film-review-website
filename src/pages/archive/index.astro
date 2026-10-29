@@ -9,7 +9,7 @@ const records = [
   ...diary.map((d) => ({ kind: "Diary", medium:d.data.medium,title:d.data.title,creator:d.data.creator || "",year:d.data.year,date:d.data.date.getTime(),rating:d.data.rating,cover:d.data.cover,url:`/diary/#${d.data.slug || d.id}`,note:d.data.note || "" })),
 ].sort((a,b)=>b.date-a.date);
 
-const mediums = [...new Set(records.map((entry)=>entry.medium))].sort();
+const mediums = ["Film", "TV", "Music", "Game", "Book", "Other"];
 const years = [...new Set(records.map((entry)=>entry.year).filter(Boolean))].sort((a,b)=>b-a);
 ---
 <BaseLayout title="The Archive" description="Explore reviews and diary notes from After the Credits.">
@@ -38,7 +38,7 @@ const years = [...new Set(records.map((entry)=>entry.year).filter(Boolean))].sor
        data-title={item.title.toLocaleLowerCase()}
     >
       <div class="archive-art">
-        {item.cover ? <img src={item.cover} alt="" loading="lazy" /> : <span>{item.medium}</span>}
+        {item.cover ? <img src={item.cover} alt="" loading="lazy" decoding="async" /> : <div class="archive-fallback"><span class="fallback-label">{item.medium}</span><span class="fallback-title">{item.title}</span></div>}
       </div>
       <div class="review-meta">{item.kind} · {item.medium}{item.year ? ` · ${item.year}` : ""}</div>
       <h3>{item.title}</h3>
@@ -79,7 +79,11 @@ const years = [...new Set(records.map((entry)=>entry.year).filter(Boolean))].sor
  .archive-item{display:block;min-width:0}
  .archive-item[hidden]{display:none}
  .archive-art{aspect-ratio:3/4;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:13px;color:var(--muted);font:1.55rem "Newsreader",serif}
- .archive-art img{width:100%;height:100%;object-fit:cover}
+ .archive-art img{width:100%;height:100%;object-fit:cover;transition:transform .25s ease}
+ .archive-item:hover .archive-art img{transform:scale(1.035)}
+ .archive-fallback{height:100%;width:100%;background:linear-gradient(145deg,var(--surface),var(--bg));display:flex;align-items:flex-start;flex-direction:column;justify-content:space-between;padding:17px;gap:12px}
+ .fallback-label{font:.61rem "DM Mono",monospace;text-transform:uppercase;color:var(--accent);letter-spacing:.11em}
+ .fallback-title{font:clamp(1.2rem,2vw,1.8rem)/1.1 "Newsreader",serif;color:var(--text);overflow-wrap:anywhere}
  .archive-item h3{font-size:1.45rem;margin:7px 0}
  .archive-creator{font-size:.78rem;color:var(--muted);margin:0}
  .archive-rating{margin-top:8px}
