@@ -11,13 +11,13 @@ currentlyReading: JoJolion
 currentlyListening: ALL OF ME
 currentlyWatchingCover: /images/currently/watching.jpg
 currentlyReadingCover: /images/currently/reading.jpg
+currentlyListeningCover: /images/currently/listening.jpg
 currentlyWatchingType: TV
 currentlyReadingAuthor: Hirohiko Araki
-currentlyReadingVolume: 8
+currentlyReadingVolume: 10
 currentlyListeningArtist: Masayoshi Takanaka
 currentlyWatchingAutoArtwork: true
 currentlyReadingAutoArtwork: true
 currentlyListeningAutoArtwork: true
 currentlyPlayingAutoArtwork: true
-currentlyListeningCover: "/images/currently/listening.jpg"
 ---
