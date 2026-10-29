@@ -63,6 +63,29 @@ class MangaArtworkTests(unittest.TestCase):
         )
 
     @patch.object(art, "get_json")
+    def test_jojolion_vol10_looks_up_exact_publisher_isbn(self, fetch):
+        queries = []
+        def fake(url, headers=None):
+            queries.append(url)
+            if "openlibrary.org" in url:
+                return {"docs": [{"title": "JoJolion Vol. 8", "cover_i": 88}]}
+            if "googleapis.com" in url:
+                return {"items": [{"volumeInfo": {
+                    "industryIdentifiers": [{"type": "ISBN_13", "identifier": "9784088804361"}],
+                    "imageLinks": {"thumbnail": "https://books.google.com/books/content?id=vol10"},
+                }}]}
+            self.fail("Unexpected lookup " + url)
+        fetch.side_effect = fake
+        url = art.reading_art({
+            "currentlyReading": "JoJolion",
+            "currentlyReadingAuthor": "Hirohiko Araki",
+            "currentlyReadingVolume": 10,
+        })
+        self.assertEqual(url, "https://books.google.com/books/content?id=vol10")
+        self.assertTrue(any("9784088804361" in q for q in queries))
+        self.assertFalse(any("9784088802381" in q for q in queries))
+
+    @patch.object(art, "get_json")
     def test_edition_cover_rejects_different_isbn(self, fetch):
         # Requested ISBN differs from the ISBN attached to the returned book.
         # The importer must reject this result rather than using its image.
