@@ -15,6 +15,18 @@ const AboutContent = aboutContent?.Content;
       <p>{about?.data.intro ?? "A personal place to write about films with patience and curiosity."}</p>
     </section>
     {AboutContent && <div class="page-copy"><AboutContent /></div>}
+    <aside class="tmdb-credit" aria-label="Poster image credits">
+      <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" aria-label="Visit The Movie Database">
+        <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short.svg" alt="TMDB" width="108" height="43" loading="lazy" />
+      </a>
+      <p>Some film and TV poster artwork is provided using The Movie Database. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    </aside>
     <p><a class="back-link" href="/">← Back to the journal</a></p>
   </article>
 </BaseLayout>
+<style>
+.tmdb-credit{max-width:690px;border-top:1px solid var(--line);margin:55px 0 30px;padding-top:22px;display:flex;align-items:center;gap:20px}
+.tmdb-credit img{width:108px;height:auto;max-height:44px;object-fit:contain}
+.tmdb-credit p{font-size:.78rem;color:var(--muted);margin:0}
+@media(max-width:500px){.tmdb-credit{align-items:flex-start;flex-direction:column;gap:12px}}
+</style>
