@@ -10,7 +10,6 @@ currentlyWatching: The Sopranos
 currentlyReading: JoJolion
 currentlyListening: ALL OF ME
 currentlyWatchingCover: /images/currently/watching.jpg
-currentlyReadingCover: /images/currently/reading.jpg
 currentlyListeningCover: /images/currently/listening.jpg
 currentlyWatchingType: TV
 currentlyReadingAuthor: Hirohiko Araki
