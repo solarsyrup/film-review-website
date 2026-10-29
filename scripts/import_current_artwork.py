@@ -290,38 +290,94 @@ def reading_art(meta):
     return manga_series_fallback(title, author)
 
 
+# Verified against the MusicBrainz artist discography. Japanese and romanized
+# artist credits may refer to the same recording artist.
+KNOWN_MUSIC_ARTISTS = {"masayoshi takanaka": "facf743e-1231-410d-bdf1-9ba11a6a4f3c"}
+KNOWN_ALBUM_GROUPS = {
+    ("masayoshi takanaka", "all of me"): "8d700fbc-1101-4eb4-bca6-469392c9009e",
+}
+
+
+def music_artist_matches(item, artist):
+    """Compare release credits by either a displayed name or a stable artist ID."""
+    if not artist:
+        return True
+    known_id = KNOWN_MUSIC_ARTISTS.get(normalized(artist))
+    for credit in item.get("artist-credit", []):
+        if not isinstance(credit, dict):
+            continue
+        performer = credit.get("artist") or {}
+        if known_id and performer.get("id") == known_id:
+            return True
+        names = [
+            credit.get("name", ""), performer.get("name", ""),
+            performer.get("sort-name", ""),
+        ]
+        if any(normalized(name) == normalized(artist) for name in names):
+            return True
+    return False
+
+
 def listening_art(meta):
     title = str(meta["currentlyListening"]).strip()
     artist = str(meta.get("currentlyListeningArtist") or "").strip()
-    # Human-friendly "Artist — Album" is supported if the optional artist field is empty.
     if not artist and " — " in title:
         artist, title = (part.strip() for part in title.split(" — ", 1))
     if not title:
         return None
+
+    # Verified release group IDs bypass problems caused by alternative Japanese
+    # spelling and overly restrictive MusicBrainz releasegroup search queries.
+    verified_id = KNOWN_ALBUM_GROUPS.get((normalized(artist), normalized(title)))
+    if verified_id:
+        return "https://coverartarchive.org/release-group/" + verified_id + "/front-500"
+
+    # Search the album title and verify the returned artist, rather than
+    # requiring the search index to understand every romanized artist alias.
     query = 'releasegroup:"' + title.replace('"', "") + '"'
-    if artist:
-        query += ' AND artist:"' + artist.replace('"', "") + '"'
-    params = {"query": query, "fmt": "json", "limit": 15}
-    result = get_json("https://musicbrainz.org/ws/2/release-group/?" + urllib.parse.urlencode(params))
+    result = get_json("https://musicbrainz.org/ws/2/release-group/?" +
+                      urllib.parse.urlencode({"query": query, "fmt": "json", "limit": 100}))
     candidates = []
     for item in result.get("release-groups", []):
         if normalized(item.get("title")) != normalized(title):
             continue
-        names = " ".join(
-            credit.get("name", "")
-            for credit in item.get("artist-credit", [])
-            if isinstance(credit, dict)
-        )
-        if artist and normalized(artist) not in normalized(names):
+        if not music_artist_matches(item, artist):
             continue
         if item.get("primary-type") not in ("Album", "EP"):
             continue
         uuid = item.get("id") or ""
         if re.fullmatch(r"[0-9a-fA-F-]{36}", uuid):
             candidates.append(uuid)
+    candidates = list(dict.fromkeys(candidates))
     if len(candidates) != 1:
         return None
     return "https://coverartarchive.org/release-group/" + candidates[0] + "/front-500"
+
+
+def release_artwork_fallback(group_art_url):
+    """Try individual release front covers if the release-group art is missing."""
+    match = re.fullmatch(
+        r"https://coverartarchive\\.org/release-group/([0-9a-fA-F-]{36})/front-500",
+        group_art_url,
+    )
+    if not match:
+        return None
+    group_id = match.group(1)
+    data = get_json(
+        "https://musicbrainz.org/ws/2/release-group/" + group_id +
+        "?inc=releases&fmt=json"
+    )
+    releases = data.get("releases", [])
+    for release in releases[:8]:
+        rid = release.get("id") or ""
+        if not re.fullmatch(r"[0-9a-fA-F-]{36}", rid):
+            continue
+        image_url = "https://coverartarchive.org/release/" + rid + "/front-500"
+        try:
+            return image_bytes(image_url)
+        except (urllib.error.URLError, ValueError, OSError):
+            continue
+    return None
 
 
 def playing_art(meta):
@@ -437,7 +493,15 @@ def main():
                     meta.pop(cover_field, None)
                 updated.pop(category, None)
                 continue
-            data, ext = image_bytes(url)
+            try:
+                data, ext = image_bytes(url)
+            except (urllib.error.URLError, ValueError, OSError):
+                if category != "listening":
+                    raise
+                alternative = release_artwork_fallback(url)
+                if alternative is None:
+                    raise
+                data, ext = alternative
             DEST.mkdir(parents=True, exist_ok=True)
             destination = DEST / (category + ext)
             destination.write_bytes(data)
