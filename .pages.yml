@@ -159,6 +159,10 @@ content:
         label: Reading - Author (optional)
         type: string
         description: "Helps match books, manga, and comics."
+      - name: currentlyReadingVolume
+        label: Reading - Volume Number (optional)
+        type: number
+        description: "For manga or graphic novels. Leave blank to prefer the first volume or the series cover. Specify a number to require that exact volume."
       - name: currentlyListeningArtist
         label: Listening - Music Artist (optional)
         type: string
