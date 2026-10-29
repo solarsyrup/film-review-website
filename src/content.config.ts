@@ -42,6 +42,7 @@ const pages = defineCollection({
     currentlyWatchingYear: z.number().optional(),
     currentlyReadingAuthor: z.string().optional(),
     currentlyReadingVolume: z.number().int().min(1).max(500).optional(),
+    currentlyReadingISBN: z.string().optional(),
     currentlyListeningArtist: z.string().optional(),
     currentlyPlayingYear: z.number().optional(),
     currentlyWatchingAutoArtwork: z.boolean().optional(),
