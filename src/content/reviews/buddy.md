@@ -5,6 +5,9 @@ year: 2026
 slug: buddy
 date: 2026-10-28
 rating: 2.5
+medium: Film
+tmdbId: 1514026
+autoPoster: true
 ---
 I saw this film on streaming a month or so after it released in theaters. I had initially expected to see it as intended, but I was grounded at the time for God knows why.
 
