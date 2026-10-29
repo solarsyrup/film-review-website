@@ -8,6 +8,7 @@ rating: 2.5
 medium: Film
 tmdbId: 1514026
 autoPoster: true
+cover: /images/posters/reviews-buddy.jpg
 ---
 I saw this film on streaming a month or so after it released in theaters. I had initially expected to see it as intended, but I was grounded at the time for God knows why.
 
