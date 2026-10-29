@@ -34,6 +34,10 @@ const pages = defineCollection({
     currentlyReading: z.string().optional(),
     currentlyListening: z.string().optional(),
     currentlyPlaying: z.string().optional(),
+    currentlyWatchingCover: z.string().optional(),
+    currentlyReadingCover: z.string().optional(),
+    currentlyListeningCover: z.string().optional(),
+    currentlyPlayingCover: z.string().optional(),
   }),
 });
 
