@@ -43,6 +43,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
             <div><span>Playing</span><p>{home.data.currentlyPlaying}</p></div>
           </div>}
         </div>
+        <p class="artwork-credit">Automatic artwork sources: <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB</a> · <a href="https://openlibrary.org" target="_blank" rel="noopener noreferrer">Open Library</a> · <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a> / <a href="https://coverartarchive.org" target="_blank" rel="noopener noreferrer">Cover Art Archive</a> · <a href="https://rawg.io" target="_blank" rel="noopener noreferrer">RAWG</a></p>
       </section>
     )}
     <section aria-labelledby="latest">
@@ -81,5 +82,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
 .currently-item > div{min-width:0}
 .currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0;overflow-wrap:anywhere}
 .currently-grid span{display:block;font:.65rem "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.artwork-credit{margin:18px 0 0;color:var(--muted);font:.61rem "DM Mono",monospace;line-height:1.7}
+.artwork-credit a{text-decoration:underline;text-decoration-color:var(--line)}
 @media(max-width:620px){.currently-grid{grid-template-columns:1fr}}
 </style>
