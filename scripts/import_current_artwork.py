@@ -99,6 +99,14 @@ def watching_art(meta):
 def reading_art(meta):
     title = str(meta["currentlyReading"]).strip()
     author = str(meta.get("currentlyReadingAuthor") or "").strip()
+    # Also recognize a common existing format such as "JoJolion - Hirohiko Araki".
+    if not author:
+        for separator in (" — ", " - "):
+            if separator in title:
+                possible_title, possible_author = (part.strip() for part in title.rsplit(separator, 1))
+                if possible_title and possible_author:
+                    title, author = possible_title, possible_author
+                break
     params = {"title": title, "fields": "title,author_name,cover_i", "limit": "15"}
     data = get_json("https://openlibrary.org/search.json?" + urllib.parse.urlencode(params))
     result = unique_match(
