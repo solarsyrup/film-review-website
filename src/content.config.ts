@@ -38,6 +38,15 @@ const pages = defineCollection({
     currentlyReadingCover: z.string().optional(),
     currentlyListeningCover: z.string().optional(),
     currentlyPlayingCover: z.string().optional(),
+    currentlyWatchingType: z.enum(["TV", "Film"]).optional(),
+    currentlyWatchingYear: z.number().optional(),
+    currentlyReadingAuthor: z.string().optional(),
+    currentlyListeningArtist: z.string().optional(),
+    currentlyPlayingYear: z.number().optional(),
+    currentlyWatchingAutoArtwork: z.boolean().optional(),
+    currentlyReadingAutoArtwork: z.boolean().optional(),
+    currentlyListeningAutoArtwork: z.boolean().optional(),
+    currentlyPlayingAutoArtwork: z.boolean().optional(),
   }),
 });
 
