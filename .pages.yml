@@ -22,9 +22,8 @@ content:
         type: string
         required: true
       - name: director
-        label: Director
+        label: Director / Creator (optional for TV and other media)
         type: string
-        required: true
       - name: year
         label: Release Year
         type: number
@@ -46,11 +45,20 @@ content:
         options:
           values: [Film, TV, Music, Game, Book, Other]
       - name: cover
-        label: Cover / Poster for Archive (optional)
+        label: Poster / Cover (optional, auto-filled for Film and TV)
         type: image
         options:
           media: images
           rename: safe
+      - name: tmdbId
+        label: TMDB ID (optional, for matching the right poster)
+        type: number
+        description: "Only needed when multiple movies/shows have the same name. Find the numeric ID in the TMDB page URL."
+      - name: autoPoster
+        label: Automatically find a poster
+        type: boolean
+        default: true
+        description: "Requires the GitHub TMDB_API_TOKEN secret. To override an automatic poster, upload your own cover."
       - name: summary
         label: Short Summary (optional)
         type: text
@@ -294,6 +302,14 @@ content:
       - name: note
         label: Brief Thoughts
         type: text
+      - name: tmdbId
+        label: TMDB ID (optional)
+        type: number
+        description: "Helps identify the correct movie or TV show when titles overlap."
+      - name: autoPoster
+        label: Automatically find a poster
+        type: boolean
+        default: true
       - name: reviewUrl
         label: Full Review Link (optional)
         type: string
