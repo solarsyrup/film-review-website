@@ -175,6 +175,9 @@ def manga_series_fallback(title, author):
 # Official Shueisha edition identifiers for otherwise hard-to-match volumes.
 # Source: https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-880238-1
 VERIFIED_VOLUME_ISBNS = {("jojolion", 8): "9784088802381"}
+# Google Books' publicly cataloged edition, verified by matching its ISBN and volume.
+# https://books.google.com/books/about/ジョジョリオン_8.html?id=Kh_arQEACAAJ
+VERIFIED_GOOGLE_BOOK_IDS = {"9784088802381": "Kh_arQEACAAJ"}
 
 
 def isbn_cover(isbn):
@@ -207,6 +210,21 @@ def isbn_cover(isbn):
         if parsed.hostname not in ("books.google.com", "books.googleusercontent.com"):
             continue
         return parsed._replace(scheme="https").geturl()
+    # Some older Japanese volumes have a Google Books page with cover artwork
+    # but are omitted from its public Books API results. Use the verified,
+    # edition-specific Google Books ID as a final fallback.
+    book_id = VERIFIED_GOOGLE_BOOK_IDS.get(isbn)
+    if book_id:
+        return (
+            "https://books.google.com/books/content?"
+            + urllib.parse.urlencode({
+                "id": book_id,
+                "printsec": "frontcover",
+                "img": "1",
+                "zoom": "1",
+                "source": "gbs_api",
+            })
+        )
     return None
 
 
