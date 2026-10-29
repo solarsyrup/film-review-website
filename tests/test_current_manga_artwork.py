@@ -64,11 +64,12 @@ class MangaArtworkTests(unittest.TestCase):
 
     @patch.object(art, "get_json")
     def test_edition_cover_rejects_different_isbn(self, fetch):
+        # Requested ISBN differs from the ISBN attached to the returned book.
+        # The importer must reject this result rather than using its image.
         fetch.return_value = {"items": [{"volumeInfo": {
-            "industryIdentifiers": [{"type": "ISBN_13", "identifier": "9784088802382"}],
+            "industryIdentifiers": [{"type": "ISBN_13", "identifier": "9784088802381"}],
             "imageLinks": {"thumbnail": "https://books.google.com/books/content?id=wrong"},
         }}]}
-        # An unrelated ISBN must not inherit the verified JoJolion cover.
         self.assertIsNone(art.isbn_cover("9784088802382"))
 
     @patch.object(art, "get_json")
