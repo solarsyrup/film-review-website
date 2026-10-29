@@ -172,6 +172,44 @@ def manga_series_fallback(title, author):
     return candidates[0] if len(candidates) == 1 else None
 
 
+# Official Shueisha edition identifiers for otherwise hard-to-match volumes.
+# Source: https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-880238-1
+VERIFIED_VOLUME_ISBNS = {("jojolion", 8): "9784088802381"}
+
+
+def isbn_cover(isbn):
+    """Find a cover for a specific ISBN without using another edition."""
+    isbn = re.sub(r"[^0-9Xx]", "", str(isbn)).upper()
+    if not re.fullmatch(r"(?:[0-9]{13}|[0-9]{9}[0-9X])", isbn):
+        return None
+    # Google Books may have a different book with a similar title.
+    # Query by ISBN and verify that the returned edition identifiers match.
+    try:
+        payload = get_json(
+            "https://www.googleapis.com/books/v1/volumes?" +
+            urllib.parse.urlencode({"q": "isbn:" + isbn, "maxResults": 5})
+        )
+    except urllib.error.URLError:
+        return None
+    for item in payload.get("items", []):
+        info = item.get("volumeInfo", {})
+        listed = {
+            re.sub(r"[^0-9Xx]", "", identifier.get("identifier", "")).upper()
+            for identifier in info.get("industryIdentifiers", [])
+        }
+        if isbn not in listed:
+            continue
+        links = info.get("imageLinks", {})
+        image_url = links.get("large") or links.get("medium") or links.get("thumbnail")
+        if not image_url:
+            continue
+        parsed = urllib.parse.urlparse(image_url)
+        if parsed.hostname not in ("books.google.com", "books.googleusercontent.com"):
+            continue
+        return parsed._replace(scheme="https").geturl()
+    return None
+
+
 def reading_art(meta):
     title = str(meta["currentlyReading"]).strip()
     author = str(meta.get("currentlyReadingAuthor") or "").strip()
@@ -218,8 +256,18 @@ def reading_art(meta):
         # Open Library search is relevance ranked; use its top exact title match.
         return "https://covers.openlibrary.org/b/id/" + str(int(good[0]["cover_i"])) + "-L.jpg"
 
+    # When Open Library lacks an exact volume, try its official edition ISBN.
+    # This never substitutes another volume.
+    selected_isbn = str(meta.get("currentlyReadingISBN") or "").strip()
+    if not selected_isbn:
+        selected_isbn = VERIFIED_VOLUME_ISBNS.get((normalized(title), preferred_volume), "")
+    if selected_isbn:
+        image_url = isbn_cover(selected_isbn)
+        if image_url:
+            return image_url
+
     if explicit:
-        print(f"Reading: volume {volume} of {title} not found; refusing a different volume.")
+        print(f"Reading: volume {volume} of {title} not found in artwork catalogs; try adding a cover manually.")
         return None
     return manga_series_fallback(title, author)
 
@@ -351,6 +399,7 @@ def main():
             "year": meta.get("currentlyWatchingYear") if category == "watching" else meta.get("currentlyPlayingYear") if category == "playing" else None,
             "creator": meta.get("currentlyReadingAuthor") if category == "reading" else meta.get("currentlyListeningArtist") if category == "listening" else None,
             "volume": meta.get("currentlyReadingVolume") if category == "reading" else None,
+            "isbn": meta.get("currentlyReadingISBN") if category == "reading" else None,
         }, sort_keys=True, ensure_ascii=False)
         if current_cover and current_cover == old_cover and old.get("query") == query:
             print(category + ": artwork is current.")
