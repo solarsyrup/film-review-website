@@ -5,7 +5,9 @@ year: 2026
 slug: you-can-see-everything
 date: 2026-10-25
 rating: 4.5
+medium: Film
 cover: /images/posters/reviews-you-can-see-everything.jpg
+autoPoster: true
 ---
 Right after Clayface, which hardly had anybody seated, I took a trip to the bathroom, and upon entering my theater of choice, I see a sea of people waiting for the start of You Can See Everything. I try to find my friend, and after a minute see him at the very top of the stairs waving at me. Right after I am seated, the A24 logo appears and the film begins.
 
