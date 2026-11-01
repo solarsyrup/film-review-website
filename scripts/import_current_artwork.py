@@ -302,6 +302,55 @@ KNOWN_ALBUM_GROUPS = {
 }
 
 
+# Official artist pages are used only for precisely identified albums.
+# This bypasses delays in MusicBrainz cataloging brand-new releases.
+OFFICIAL_BANDCAMP_ALBUMS = {
+    ("deltarune piano collections volume 2", frozenset(("toby fox", "trevor alan gomes"))):
+        "https://trevorgomes.bandcamp.com/album/deltarune-piano-collections-vol-2",
+}
+
+
+def album_words(artist):
+    return frozenset(
+        normalized(person)
+        for person in re.split(r"\\s*(?:,|&|\\band\\b)\\s*", artist, flags=re.I)
+        if normalized(person)
+    )
+
+
+def official_album_url(title, artist):
+    # Handle "Vol. 2", "Vol 2", and "Volume 2" as the same album title.
+    normalized_title = re.sub(r"\\bvol\\b", "volume", normalized(title))
+    return OFFICIAL_BANDCAMP_ALBUMS.get((normalized_title, album_words(artist)))
+
+
+def official_album_cover(url):
+    """Read only the cover metadata of a verified artist's official Bandcamp page."""
+    from html.parser import HTMLParser
+    class CoverParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.cover = None
+        def handle_starttag(self, tag, attrs):
+            if tag != "meta":
+                return
+            d = dict(attrs)
+            if d.get("property") == "og:image" or d.get("name") == "twitter:image":
+                self.cover = self.cover or d.get("content")
+    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req, timeout=18) as response:
+        page = response.read(1_000_000).decode("utf-8", errors="replace")
+    parser = CoverParser()
+    parser.feed(page)
+    if not parser.cover:
+        return None
+    parsed = urllib.parse.urlparse(parser.cover)
+    # Bandcamp cover art is served from their image CDN.
+    if parsed.scheme != "https" or parsed.hostname not in ("f4.bcbits.com", "f1.bcbits.com", "f2.bcbits.com"):
+        return None
+    return parser.cover
+
+
 def music_artist_matches(item, artist):
     """Compare release credits by either a displayed name or a stable artist ID."""
     if not artist:
@@ -329,6 +378,15 @@ def listening_art(meta):
         artist, title = (part.strip() for part in title.split(" — ", 1))
     if not title:
         return None
+
+    official_page = official_album_url(title, artist)
+    if official_page:
+        try:
+            cover = official_album_cover(official_page)
+            if cover:
+                return cover
+        except (urllib.error.URLError, OSError, ValueError) as exc:
+            print("Listening: official album art unavailable: " + str(exc), file=sys.stderr)
 
     # Verified release group IDs bypass problems caused by alternative Japanese
     # spelling and overly restrictive MusicBrainz releasegroup search queries.
