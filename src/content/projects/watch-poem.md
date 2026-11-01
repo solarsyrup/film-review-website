@@ -13,6 +13,8 @@ or near me
 
 to remind me of the time
 
+
+
 the time that flows through me
 
 and with me
@@ -28,6 +30,8 @@ its gentle ticks remind me of
 time that i will not earn back
 
 though i will bask in it for eternity
+
+
 
 the time that i was air in a thousand-year old tree
 
