@@ -313,14 +313,14 @@ OFFICIAL_BANDCAMP_ALBUMS = {
 def album_words(artist):
     return frozenset(
         normalized(person)
-        for person in re.split(r"\\s*(?:,|&|\\band\\b)\\s*", artist, flags=re.I)
+        for person in re.split(r"\s*(?:,|&|\band\b)\s*", artist, flags=re.I)
         if normalized(person)
     )
 
 
 def official_album_url(title, artist):
     # Handle "Vol. 2", "Vol 2", and "Volume 2" as the same album title.
-    normalized_title = re.sub(r"\\bvol\\b", "volume", normalized(title))
+    normalized_title = re.sub(r"\bvol\b", "volume", normalized(title))
     return OFFICIAL_BANDCAMP_ALBUMS.get((normalized_title, album_words(artist)))
 
 
