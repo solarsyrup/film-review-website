@@ -246,6 +246,11 @@ content:
         required: true
         options:
           values: [Film, Writing, Photography, Music, Other]
+      - name: poetry
+        label: Preserve poetry line breaks
+        type: boolean
+        default: false
+        description: "Turn on for poems. Keeps intentional line endings and stanza spacing instead of formatting the text like prose."
       - name: year
         label: Year Created (optional)
         type: number
