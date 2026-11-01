@@ -8,13 +8,13 @@ intro: A journal of mostly films, but also other art I experience. The art is
   my enjoyment or "dedication" to a work or film.
 currentlyWatching: The Sopranos
 currentlyReading: JoJolion
-currentlyListening: ALL OF ME
+currentlyListening: DELTARUNE Piano Collections, Volume 2
 currentlyWatchingCover: /images/currently/watching.jpg
 currentlyListeningCover: /images/currently/listening.jpg
 currentlyWatchingType: TV
 currentlyReadingAuthor: Hirohiko Araki
 currentlyReadingVolume: 10
-currentlyListeningArtist: Masayoshi Takanaka
+currentlyListeningArtist: Toby Fox, Trevor Alan Gomes
 currentlyWatchingAutoArtwork: true
 currentlyReadingAutoArtwork: true
 currentlyListeningAutoArtwork: true
