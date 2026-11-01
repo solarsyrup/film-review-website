@@ -10,7 +10,6 @@ currentlyWatching: The Sopranos
 currentlyReading: JoJolion
 currentlyListening: DELTARUNE Piano Collections, Volume 2
 currentlyWatchingCover: /images/currently/watching.jpg
-currentlyListeningCover: /images/currently/listening.jpg
 currentlyWatchingType: TV
 currentlyReadingAuthor: Hirohiko Araki
 currentlyReadingVolume: 10

@@ -3,10 +3,5 @@
     "query": "{\"creator\": null, \"isbn\": null, \"kind\": \"TV\", \"title\": \"The Sopranos\", \"volume\": null, \"year\": null}",
     "cover": "/images/currently/watching.jpg",
     "source": "TMDB"
-  },
-  "listening": {
-    "query": "{\"creator\": \"Masayoshi Takanaka\", \"isbn\": null, \"kind\": \"listening\", \"title\": \"ALL OF ME\", \"volume\": null, \"year\": null}",
-    "cover": "/images/currently/listening.jpg",
-    "source": "MusicBrainz / Cover Art Archive"
   }
 }
