@@ -2,13 +2,10 @@
 title: Sand
 slug: sand-poem
 category: Writing
-poetry: true
 year: 2026
 date: 2026-11-01
 role: Poet
 ---
-# Sand
-
 I find myself on the beach on the Atlantic coast
 
 I sit down and take my sandals off
