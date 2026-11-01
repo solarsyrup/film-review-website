@@ -141,6 +141,27 @@ class MangaArtworkTests(unittest.TestCase):
 
 
 class AlbumArtworkTests(unittest.TestCase):
+    def test_official_deltarune_vol2_alias_and_artist_order(self):
+        expected = "https://trevorgomes.bandcamp.com/album/deltarune-piano-collections-vol-2"
+        self.assertEqual(
+            art.official_album_url("DELTARUNE Piano Collections, Volume 2", "Toby Fox, Trevor Alan Gomes"),
+            expected,
+        )
+        self.assertEqual(
+            art.official_album_url("DELTARUNE Piano Collections, Vol. 2", "Trevor Alan Gomes & Toby Fox"),
+            expected,
+        )
+        self.assertIsNone(art.official_album_url("DELTARUNE Piano Collections, Vol. 1", "Toby Fox, Trevor Alan Gomes"))
+
+    @patch.object(art, "official_album_cover", return_value="https://f4.bcbits.com/img/a1111111111_10.jpg")
+    def test_official_album_cover_prioritized(self, official_cover):
+        found = art.listening_art({
+            "currentlyListening": "DELTARUNE Piano Collections, Volume 2",
+            "currentlyListeningArtist": "Toby Fox, Trevor Alan Gomes",
+        })
+        self.assertEqual(found, "https://f4.bcbits.com/img/a1111111111_10.jpg")
+        official_cover.assert_called_once()
+
     def test_masayoshi_takanaka_all_of_me_verified_album(self):
         url = art.listening_art({
             "currentlyListening": "ALL OF ME",
