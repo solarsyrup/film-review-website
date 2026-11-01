@@ -7,6 +7,7 @@ date: 2026-10-31
 rating: 4.5
 medium: Film
 autoPoster: true
+cover: /images/posters/reviews-wildwood.jpg
 ---
 Yesterday, my friend and I found ourselves in a common predicament. School let out at 2:30, and we had to be back by 7:15 for our school's annual theater production. Bear in mind that we live 30 minutes away from the school, so accounting for driving time, we would have 3 hours and 45 minutes at home. However, I must say I had a much better time than if I had bummed around at home. I decided to invite a friend who lives around the area and the three of us saw Wildwood at our theater of choice.
 
