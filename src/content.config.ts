@@ -59,6 +59,7 @@ const projects = defineCollection({
     title: z.string(),
     slug: z.string().nullish(),
     category: z.enum(["Film", "Writing", "Photography", "Music", "Other"]).nullish(),
+    poetry: z.boolean().optional(),
     year: z.preprocess((value) => value === "" ? undefined : value, z.number().nullish()),
     date: z.preprocess((value) => value === "" ? undefined : value, z.coerce.date().nullish()),
     role: z.string().nullish(),
