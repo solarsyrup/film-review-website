@@ -3,5 +3,10 @@
     "query": "{\"creator\": null, \"isbn\": null, \"kind\": \"TV\", \"title\": \"The Sopranos\", \"volume\": null, \"year\": null}",
     "cover": "/images/currently/watching.jpg",
     "source": "TMDB"
+  },
+  "listening": {
+    "query": "{\"creator\": \"Toby Fox, Trevor Alan Gomes\", \"isbn\": null, \"kind\": \"listening\", \"title\": \"DELTARUNE Piano Collections, Volume 2\", \"volume\": null, \"year\": null}",
+    "cover": "/images/currently/listening.jpg",
+    "source": "MusicBrainz / Cover Art Archive"
   }
 }
