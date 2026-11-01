@@ -2,6 +2,7 @@
 title: Sand
 slug: sand-poem
 category: Writing
+poetry: true
 year: 2026
 date: 2026-11-01
 role: Poet
