@@ -7,6 +7,7 @@ date: 2026-11-03
 medium: Film
 autoPoster: true
 summary: Bo Burnham captures the awkwardness of middle school with surprisingly realistic characters.
+cover: /images/posters/reviews-eighth-grade.jpg
 ---
 Recently, I've been seeing the Rick and Morty Szechuan sauce clip from *Eighth Grade*, directed by Bo Burnham. I knew Bo Burnham as the "Welcome to the Internet" guy, and the scene was so awkward that it made me intrigued about the movie—or the film, if you will.
 
