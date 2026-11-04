@@ -7,6 +7,7 @@ date: 2026-11-03
 rating: 3.5
 medium: Film
 autoPoster: true
+cover: /images/posters/reviews-eighth-grade.jpg
 ---
 Recently, I’ve been seeing the Rick and Morty Szechuan sauce clip from Eighth Grade on TikTok and instagram reels. This film is directed by Bo Burnham, who I knew as the “Welcome to the Internet” guy, and the scene was so awkward and funny it made me intrigued about the film, so today I decided to give it a watch.
 
