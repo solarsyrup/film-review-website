@@ -10,6 +10,7 @@ const reviews = defineCollection({
     slug: z.string().optional(),
     date: z.coerce.date().optional(),
     rating: z.number().min(0).max(5).optional(),
+    favorite: z.boolean().optional(),
     summary: z.string().optional(),
     medium: z.enum(["Film", "TV", "Music", "Game", "Book", "Other"]).optional(),
     cover: z.string().optional(),
@@ -17,6 +18,17 @@ const reviews = defineCollection({
     autoPoster: z.boolean().optional(),
     spoilerHeading: z.string().optional(),
     spoilerText: z.string().optional(),
+  }),
+});
+
+const commonplace = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/commonplace" }),
+  schema: z.object({
+    title: z.string().optional(),
+    slug: z.string().optional(),
+    date: z.coerce.date(),
+    category: z.enum(["Observation", "Philosophy", "Quotation", "Other"]).default("Observation"),
+    source: z.string().optional(),
   }),
 });
 
@@ -91,4 +103,4 @@ const diary = defineCollection({
   }),
 });
 
-export const collections = { reviews, pages, projects, diary };
+export const collections = { reviews, pages, projects, diary, commonplace };
