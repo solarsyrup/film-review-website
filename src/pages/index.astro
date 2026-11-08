@@ -1,90 +1,122 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import StarRating from "../components/StarRating.astro";
 import { getCollection, render } from "astro:content";
 
-const reviews = (await getCollection("reviews"))
-  .sort((a, b) => (b.data.date?.valueOf() ?? 0) - (a.data.date?.valueOf() ?? 0));
-const pages = await getCollection("pages");
-const home = pages.find((page) => page.data.slug === "home");
-const homeContent = home ? await render(home) : null;
-const HomeContent = homeContent?.Content;
-const dateLabel = (date) => date.toLocaleDateString("en-US", {
-  month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
-});
+const [reviews, diary, commonplace, projects, pages] = await Promise.all([
+ getCollection("reviews"),getCollection("diary"),getCollection("commonplace"),getCollection("projects"),getCollection("pages")
+]);
+const home=pages.find(page=>page.data.slug==="home");
+const rendered=home?await render(home):null;
+const HomeContent=rendered?.Content;
+const clean=(body:string)=>body
+ .replace(/^---\s*[\s\S]*?\n---\s*/,"")
+ .replace(/![[^\]]*\]\([^)]*\)/g,"")
+ .replace(/^#{1,6}\s+.*$/gm,"")
+ .replace(/\[([^\]]+)\]\([^)]+\)/g,"$1")
+ .replace(/[*_~`>#]/g,"")
+ .replace(/\s+/g," ").trim();
+type Entry={type:"Journal"|"Diary"|"Commonplace"|"Portfolio";title:string;date:number;url:string;excerpt:string;image?:string;medium?:string};
+const entries:Entry[]=[
+ ...reviews.map(r=>({type:"Journal" as const,title:r.data.title,date:r.data.date?.getTime()??0,url:`/reviews/${r.data.slug||r.id}/`,excerpt:clean(r.body||"")||r.data.summary||"",image:r.data.cover,medium:r.data.medium||"Film"})),
+ ...diary.map(d=>({type:"Diary" as const,title:d.data.title,date:d.data.date.getTime(),url:`/diary/#${d.data.slug||d.id}`,excerpt:d.data.note||"",image:d.data.cover,medium:d.data.medium})),
+ ...commonplace.map(c=>({type:"Commonplace" as const,title:c.data.title||"Untitled thought",date:c.data.date.getTime(),url:`/commonplace/#${c.data.slug||c.id}`,excerpt:clean(c.body||"")||c.data.source||"",medium:c.data.category})),
+ ...projects.map(p=>({type:"Portfolio" as const,title:p.data.title,date:p.data.date?.getTime()??(p.data.year?Date.UTC(p.data.year,0,1):0),url:`/portfolio/${p.data.slug||p.id}/`,excerpt:p.data.description||clean(p.body||""),image:p.data.cover||undefined,medium:p.data.category||"Other"}))
+].sort((a,b)=>b.date-a.date||a.title.localeCompare(b.title)).slice(0,6);
+const dateLabel=(time:number)=>time?new Date(time).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"}):"Undated";
 ---
-<BaseLayout title={home?.data.title ?? "Journal"} description={home?.data.intro ?? "A personal film journal of reviews and reflections."}>
-  <div class="shell">
-    <section class="hero">
-      <div class="eyebrow">{home?.data.eyebrow ?? "Notes on cinema · An independent film journal"}</div>
-      <h1>{home?.data.headline ?? "Films worth thinking about."}</h1>
-      <p>{home?.data.intro ?? "A personal journal of movies, images, and ideas that stay with you after the screen goes dark."}</p>
-      {HomeContent && <div class="page-copy"><HomeContent /></div>}
-    </section>
-    {(home?.data.currentlyWatching || home?.data.currentlyReading || home?.data.currentlyListening || home?.data.currentlyPlaying) && (
-      <section class="currently" aria-label="Currently experiencing">
-        <div class="eyebrow">At the moment</div>
-        <h2>Currently experiencing.</h2>
-        <div class="currently-grid">
-          {home?.data.currentlyWatching && <div class="currently-item">
-            {home.data.currentlyWatchingCover && <img src={home.data.currentlyWatchingCover} alt={`Poster for ${home.data.currentlyWatching}`} loading="lazy" decoding="async" />}
-            <div><span>Watching</span><p>{home.data.currentlyWatching}</p></div>
-          </div>}
-          {home?.data.currentlyReading && <div class="currently-item">
-            {home.data.currentlyReadingCover && <img src={home.data.currentlyReadingCover} alt={`Cover for ${home.data.currentlyReading}`} loading="lazy" decoding="async" />}
-            <div><span>Reading</span><p>{home.data.currentlyReading}{home.data.currentlyReadingVolume ? ` · Vol. ${home.data.currentlyReadingVolume}` : ""}</p>{home.data.currentlyReadingAuthor && <p class="currently-credit">{home.data.currentlyReadingAuthor}</p>}</div>
-          </div>}
-          {home?.data.currentlyListening && <div class="currently-item currently-item--album">
-            {home.data.currentlyListeningCover && <img src={home.data.currentlyListeningCover} alt={`Artwork for ${home.data.currentlyListening}`} loading="lazy" decoding="async" />}
-            <div><span>Listening</span><p>{home.data.currentlyListening}</p>{home.data.currentlyListeningArtist && <p class="currently-credit">{home.data.currentlyListeningArtist}</p>}</div>
-          </div>}
-          {home?.data.currentlyPlaying && <div class="currently-item">
-            {home.data.currentlyPlayingCover && <img src={home.data.currentlyPlayingCover} alt={`Artwork for ${home.data.currentlyPlaying}`} loading="lazy" decoding="async" />}
-            <div><span>Playing</span><p>{home.data.currentlyPlaying}</p></div>
-          </div>}
-        </div>
-      </section>
-    )}
-    <section aria-labelledby="latest">
-      <div class="section-heading">
-        <h2 id="latest">{home?.data.sectionHeading ?? "Recent writing"}</h2>
-        <span class="muted review-meta">{reviews.length} {reviews.length === 1 ? "review" : "reviews"}</span>
-      </div>
-      {reviews.length ? (
-        <ul class="review-list">
-          {reviews.map((review) => (
-            <li class="review-row">
-              <div>
-                <a href={`/reviews/${review.data.slug || review.id}/`}><h3>{review.data.title}</h3></a>
-                <div class="review-meta">{[review.data.year, review.data.director && `Dir. ${review.data.director}`, review.data.date && dateLabel(review.data.date)].filter(Boolean).join(" · ")}</div>
-              </div>
-              {review.data.rating != null && <div class="rating">
-                <StarRating value={review.data.rating} />
-              </div>}
-              {review.data.summary && <p class="summary">{review.data.summary}</p>}
-              <div><a class="text-link review-meta" href={`/reviews/${review.data.slug || review.id}/`}>Read review ↗</a></div>
-            </li>
-          ))}
-        </ul>
-      ) : <div class="empty">No reviews yet. Add your first one through Pages CMS and it will appear here.</div>}
-    </section>
-    <hr class="rule" />
-    <p class="muted">{home?.data.closingNote ?? "A living archive of things seen, felt, and thought."}</p>
-    <p class="artwork-credit">Automatic artwork sources: <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB</a> · <a href="https://openlibrary.org" target="_blank" rel="noopener noreferrer">Open Library</a> / <a href="https://jikan.moe" target="_blank" rel="noopener noreferrer">Jikan</a> (manga) · <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a> / <a href="https://coverartarchive.org" target="_blank" rel="noopener noreferrer">Cover Art Archive</a> · <a href="https://rawg.io" target="_blank" rel="noopener noreferrer">RAWG</a></p>
-  </div>
+<BaseLayout title="Home" description="After the Credits — a journal of art, thoughts and things I've made.">
+ <div class="shell">
+  <section class="hero home-hero">
+   <div class="eyebrow">{home?.data.eyebrow??"Notes on cinema · An independent film journal"}</div>
+   <h1>After the Credits.</h1>
+   <p>A personal journal of art, thoughts, and things I've made. Mostly films, but never just films.</p>
+   {HomeContent&&<div class="page-copy"><HomeContent/></div>}
+  </section>
+  {(home?.data.currentlyWatching||home?.data.currentlyReading||home?.data.currentlyListening||home?.data.currentlyPlaying)&&
+  <section class="currently" aria-label="Currently experiencing">
+   <h2>Currently experiencing.</h2>
+   <p class="section-intro">A little snapshot of what's occupying my time.</p>
+   <div class="current-grid">
+    {home?.data.currentlyWatching&&<div class="current-item">
+     {home.data.currentlyWatchingCover&&<img src={home.data.currentlyWatchingCover} alt={`Poster for ${home.data.currentlyWatching}`} loading="lazy"/>}
+     <div class="eyebrow">Watching</div><h3>{home.data.currentlyWatching}</h3>
+    </div>}
+    {home?.data.currentlyReading&&<div class="current-item">
+     {home.data.currentlyReadingCover&&<img src={home.data.currentlyReadingCover} alt={`Cover for ${home.data.currentlyReading}`} loading="lazy"/>}
+     <div class="eyebrow">Reading</div><h3>{home.data.currentlyReading}{home.data.currentlyReadingVolume?` · Vol. ${home.data.currentlyReadingVolume}`:""}</h3>
+     {home.data.currentlyReadingAuthor&&<p>{home.data.currentlyReadingAuthor}</p>}
+    </div>}
+    {home?.data.currentlyListening&&<div class="current-item album">
+     {home.data.currentlyListeningCover&&<img src={home.data.currentlyListeningCover} alt={`Artwork for ${home.data.currentlyListening}`} loading="lazy"/>}
+     <div class="eyebrow">Listening</div><h3>{home.data.currentlyListening}</h3>
+     {home.data.currentlyListeningArtist&&<p>{home.data.currentlyListeningArtist}</p>}
+    </div>}
+    {home?.data.currentlyPlaying&&<div class="current-item">
+     {home.data.currentlyPlayingCover&&<img src={home.data.currentlyPlayingCover} alt={`Artwork for ${home.data.currentlyPlaying}`} loading="lazy"/>}
+     <div class="eyebrow">Playing</div><h3>{home.data.currentlyPlaying}</h3>
+    </div>}
+   </div>
+  </section>}
+  <section class="recent" aria-labelledby="recent-title">
+   <div class="recent-head"><h2 id="recent-title">Recently added.</h2>
+    <label class="review-meta" for="recent-filter">Show <select id="recent-filter">
+     <option value="all">Everything</option><option value="Journal">Journal</option><option value="Diary">Diary</option><option value="Commonplace">Commonplace</option><option value="Portfolio">Portfolio</option>
+    </select></label>
+   </div>
+   {entries.length?<div class="recent-entries">
+    {entries.map(entry=><a class="recent-entry" href={entry.url} data-type={entry.type}>
+     <div class="entry-image">
+      {entry.image?<img src={entry.image} alt="" loading="lazy" decoding="async"/>:<span>{entry.type==="Commonplace"?"✎":entry.type}</span>}
+     </div>
+     <div class="entry-text">
+      <div class="review-meta">{entry.type}{entry.medium?` · ${entry.medium}`:""}{entry.date?` · ${dateLabel(entry.date)}`:""}</div>
+      <h3>{entry.title}</h3>
+      {entry.excerpt&&<p>{entry.excerpt}</p>}
+      <span class="entry-more">Read entry ↗</span>
+     </div>
+    </a>)}
+   </div>:<p class="empty">Nothing published just yet. New Journal, Diary, Commonplace and Portfolio entries will appear here.</p>}
+   <p class="empty" id="recent-empty" hidden>No recent entries in that section.</p>
+   <div class="recent-links"><a class="text-link review-meta" href="/journal/">Explore the Journal ↗</a><a class="text-link review-meta" href="/commonplace/">Open the Commonplace Book ↗</a></div>
+  </section>
+  <p class="artwork-credit">Automatic artwork sources: <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB</a> · <a href="https://openlibrary.org" target="_blank" rel="noopener noreferrer">Open Library</a> / <a href="https://jikan.moe" target="_blank" rel="noopener noreferrer">Jikan</a> (manga) · <a href="https://musicbrainz.org" target="_blank" rel="noopener noreferrer">MusicBrainz</a> / <a href="https://coverartarchive.org" target="_blank" rel="noopener noreferrer">Cover Art Archive</a> · <a href="https://rawg.io" target="_blank" rel="noopener noreferrer">RAWG</a></p>
+ </div>
 </BaseLayout>
+<script>
+const select=document.getElementById("recent-filter") as HTMLSelectElement;
+const entries=[...document.querySelectorAll<HTMLElement>(".recent-entry")];
+const empty=document.getElementById("recent-empty");
+select?.addEventListener("change",()=>{
+ let shown=0;
+ for(const item of entries){const match=select.value==="all"||item.dataset.type===select.value;item.hidden=!match;if(match)shown++;}
+ if(empty)empty.hidden=shown!==0;
+});
+</script>
 <style>
-.currently{border-top:1px solid var(--line);margin-bottom:47px;padding-top:22px}
-.currently h2{font-size:1.7rem;margin:6px 0 19px}
-.currently-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 28px}
-.currently-item{display:flex;align-items:flex-start;gap:13px;min-width:0}
-.currently-item img{display:block;width:74px;height:108px;flex:none;object-fit:cover;background:var(--surface);border:1px solid var(--line);border-radius:2px}
-.currently-item--album img{width:94px;height:94px;aspect-ratio:1 / 1;object-fit:cover}
-.currently-item > div{min-width:0}
-.currently-grid p{color:var(--body-copy);font-size:.92rem;margin:0;overflow-wrap:anywhere}
-.currently-grid span{display:block;font:.65rem "DM Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
-.currently-grid .currently-credit{font-size:.77rem;color:var(--muted);margin-top:3px;line-height:1.4}
-.artwork-credit{margin:42px 0 28px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font:.61rem "DM Mono",monospace;line-height:1.7}
+.home-hero{padding-bottom:46px}
+.currently{border-top:1px solid var(--line);margin-bottom:53px;padding-top:24px}
+.currently h2,.recent h2{font-size:2rem;margin:0 0 8px}
+.section-intro{color:var(--muted);font-size:.85rem;margin-bottom:22px}
+.current-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.current-item{min-width:0}
+.current-item img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border:1px solid var(--line);background:var(--surface);margin-bottom:13px}
+.current-item.album img{aspect-ratio:1/1;object-fit:cover}
+.current-item .eyebrow{font-size:.63rem;margin-bottom:7px}
+.current-item h3{font-size:1.13rem;line-height:1.2;margin:0 0 4px;overflow-wrap:anywhere}
+.current-item p{font-size:.75rem;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}
+.recent-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:19px}
+.recent-head label{display:flex;align-items:center;gap:8px}
+.recent-head select{padding:9px 11px;background:var(--surface);color:var(--text);border:1px solid var(--line);font:.73rem "DM Mono",monospace}
+.recent-entry{display:grid;grid-template-columns:85px minmax(0,1fr);gap:20px;border-top:1px solid var(--line);padding:21px 0}
+.recent-entry[hidden]{display:none}
+.entry-image{aspect-ratio:3/4;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font:1rem "Newsreader",Georgia,serif;text-align:center;overflow:hidden}
+.entry-image img{width:100%;height:100%;object-fit:cover}
+.entry-text{min-width:0}
+.entry-text h3{font-size:1.6rem;margin:7px 0 6px}
+.entry-text p{font-size:.88rem;color:var(--body-copy);margin:0 0 9px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.entry-more{font:.67rem "DM Mono",monospace;color:var(--accent)}
+.recent-links{display:flex;flex-wrap:wrap;gap:23px;margin:24px 0}
+.artwork-credit{margin:50px 0 28px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font:.61rem "DM Mono",monospace;line-height:1.7}
 .artwork-credit a{text-decoration:underline;text-decoration-color:var(--line)}
-@media(max-width:620px){.currently-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.current-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 15px}.recent-entry{grid-template-columns:68px minmax(0,1fr);gap:14px}}
 </style>
