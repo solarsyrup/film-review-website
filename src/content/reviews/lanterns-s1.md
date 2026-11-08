@@ -9,8 +9,6 @@ medium: TV
 cover: /images/posters/reviews-lanterns-s1.jpg
 autoPoster: true
 ---
-# Lanterns (2026)
-
 I just finished watching Lanterns. I know I’m a little late to it, and I wasn’t watching every Sunday when the episodes were coming out, but a friend whom I regularly see movies with introduced me to the show. He told me it was really good, so I gave it a watch, and I gotta say, I loved it.
 
 It took me a while to get through, though, because each episode was upwards of 55 minutes long. I think the finale even reached over an hour. I’m used to shows like Breaking Bad, which have relatively long episodes, but once we get past the hour mark, it’s like, wow, this is practically a movie every episode.
