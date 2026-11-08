@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StarRating from "../../components/StarRating.astro";
+import { getCollection } from "astro:content";
+
+const reviews=(await getCollection("reviews")).sort((a,b)=>(b.data.date?.getTime()??0)-(a.data.date?.getTime()??0));
+const excerpt=(body:string)=>body
+ .replace(/^---\s*[\s\S]*?\n---\s*/,"")
+ .replace(/![[^\]]*\]\([^)]*\)/g,"")
+ .replace(/^#{1,6}\s+.*$/gm,"")
+ .replace(/\[([^\]]+)\]\([^)]+\)/g,"$1")
+ .replace(/[*_~`>#]/g,"")
+ .replace(/\s+/g," ").trim().slice(0,340);
+const dateLabel=(date:Date)=>date.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"});
+---
+<BaseLayout title="The Journal" description="Longer reviews and reflections on film, television, music, books and other art.">
+<div class="shell">
+ <section class="hero">
+  <div class="eyebrow">Notes on art and media</div>
+  <h1>The Journal.</h1>
+  <p>Longer thoughts on films, television, books, music, games, and anything else worth writing about.</p>
+ </section>
+ <section aria-label="Journal entries">
+  <div class="section-heading"><h2>All entries</h2><span class="review-meta">{reviews.length} {reviews.length===1?"entry":"entries"}</span></div>
+  {reviews.length ? <div class="journal-list">
+   {reviews.map((review)=><article class="journal-entry">
+    <a class="entry-thumb" href={`/reviews/${review.data.slug||review.id}/`} aria-label={`Read ${review.data.title}`}>
+     {review.data.cover ? <img src={review.data.cover} alt={`Artwork for ${review.data.title}`} loading="lazy" decoding="async"/> : <span>{review.data.medium||"Film"}</span>}
+    </a>
+    <div class="entry-copy">
+     <div class="review-meta">{review.data.medium||"Film"}{review.data.date?` · ${dateLabel(review.data.date)}`:""}{review.data.year?` · ${review.data.year}`:""}</div>
+     <h3><a href={`/reviews/${review.data.slug||review.id}/`}>{review.data.title}</a></h3>
+     {review.data.rating!=null&&<div class="entry-rating"><StarRating value={review.data.rating}/></div>}
+     <p class="entry-excerpt">{excerpt(review.body||"")||review.data.summary||"Open this entry to read the full review."}{excerpt(review.body||"").length>=340?"…":""}</p>
+     <a class="text-link review-meta" href={`/reviews/${review.data.slug||review.id}/`}>Continue reading ↗</a>
+    </div>
+   </article>)}
+  </div> : <p class="empty">Nothing in the Journal yet. Publish a review in Pages CMS and it'll appear here.</p>}
+ </section>
+</div>
+</BaseLayout>
+<style>
+.journal-entry{border-top:1px solid var(--line);padding:27px 0;display:grid;grid-template-columns:115px minmax(0,1fr);gap:23px}
+.entry-thumb{aspect-ratio:2/3;background:var(--surface);border:1px solid var(--line);overflow:hidden;display:grid;place-items:center;color:var(--muted);font:1.4rem "Newsreader",Georgia,serif;text-align:center}
+.entry-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.entry-copy{min-width:0}
+.entry-copy h3{font-size:1.85rem;margin:7px 0 8px}
+.entry-rating{margin:0 0 10px}
+.entry-excerpt{font-size:.96rem;line-height:1.65;color:var(--body-copy);margin:0 0 10px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;overflow-wrap:anywhere}
+@media(max-width:620px){.journal-entry{grid-template-columns:85px minmax(0,1fr);gap:15px}.entry-copy h3{font-size:1.55rem}.entry-excerpt{-webkit-line-clamp:4}}
+</style>
