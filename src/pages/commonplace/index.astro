@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+const items = (await getCollection("commonplace")).sort((a,b) => b.data.date.getTime()-a.data.date.getTime());
+const entries = await Promise.all(items.map(async item => ({ item, Content:(await render(item)).Content })));
+const dateLabel = (date: Date) => date.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"});
+---
+<BaseLayout title="The Commonplace Book" description="Collected observations, quotations and little ideas worth remembering.">
+  <div class="shell">
+    <section class="hero">
+      <div class="eyebrow">Collected observations & ideas</div>
+      <h1>The Commonplace Book.</h1>
+      <p>A place for the fragments that don't belong anywhere else. Thoughts, quotations, and things I want to remember.</p>
+    </section>
+    <section aria-label="Commonplace entries">
+      <div class="tools">
+        <span class="review-meta" id="note-count">{entries.length} {entries.length===1?"entry":"entries"}</span>
+        <label for="note-category" class="review-meta">Show <select id="note-category"><option value="">Everything</option><option>Observation</option><option>Philosophy</option><option>Quotation</option><option>Other</option></select></label>
+      </div>
+      {entries.length ? <div id="notes">
+        {entries.map(({item,Content}) => <article class="note" data-category={item.data.category} id={item.data.slug || item.id}>
+          <div class="note-date review-meta">{dateLabel(item.data.date)}</div>
+          <div class="note-main">
+            <div class="eyebrow">{item.data.category}</div>
+            {item.data.title && <h2>{item.data.title}</h2>}
+            <div class:list={["note-body", {"quotation":item.data.category==="Quotation"}]}><Content /></div>
+            {item.data.source && <p class="source">— {item.data.source}</p>}
+          </div>
+        </article>)}
+      </div> : <p class="empty">This notebook is waiting for its first entry.</p>}
+      <p class="empty" id="notes-empty" hidden>No entries in this category yet.</p>
+    </section>
+  </div>
+</BaseLayout>
+<script>
+const category=document.getElementById("note-category") as HTMLSelectElement;
+const notes=[...document.querySelectorAll<HTMLElement>(".note")];
+const count=document.getElementById("note-count");
+const empty=document.getElementById("notes-empty");
+category?.addEventListener("change",()=>{
+ let shown=0;
+ for(const note of notes){const match=!category.value||note.dataset.category===category.value;note.hidden=!match;if(match)shown++;}
+ if(count)count.textContent=shown+" "+(shown===1?"entry":"entries");
+ if(empty)empty.hidden=shown!==0;
+});
+</script>
+<style>
+.tools{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px;flex-wrap:wrap}
+.tools label{display:flex;align-items:center;gap:10px}
+.tools select{background:var(--surface);color:var(--text);border:1px solid var(--line);padding:9px 11px;font:inherit}
+.note{padding:26px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:125px minmax(0,1fr);gap:20px}
+.note[hidden]{display:none}
+.note-main .eyebrow{font-size:.62rem}
+.note h2{font-size:1.7rem;margin:8px 0 14px}
+.note-body{font-family:"Newsreader",Georgia,serif;font-size:1.18rem;line-height:1.55;color:var(--body-copy);max-width:640px;overflow-wrap:anywhere}
+.note-body.quotation{font-style:italic}
+.note-body :global(p){margin-bottom:.7em}
+.note-body :global(a){color:var(--accent);text-decoration:underline}
+.source{color:var(--muted);font:.72rem "DM Mono",monospace;margin:13px 0}
+@media(max-width:620px){.note{grid-template-columns:1fr;gap:8px}.note-date{margin-bottom:4px}}
+</style>
