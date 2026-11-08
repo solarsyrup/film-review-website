@@ -35,6 +35,15 @@ content:
       - name: date
         label: Publication Date
         type: date
+      - name: publishedAt
+        label: First published (automatically recorded)
+        type: string
+        readonly: true
+        description: "Set from GitHub history; editing does not change this."
+      - name: feedSortAt
+        label: Homepage order override (optional)
+        type: string
+        description: "ISO date-time, e.g. 2026-11-08T04:59:30Z. Leave blank for normal original publication order."
         required: true
       - name: rating
         label: Rating (out of 5)
@@ -104,6 +113,14 @@ content:
       - name: date
         label: Date
         type: date
+      - name: publishedAt
+        label: First published (automatically recorded)
+        type: string
+        readonly: true
+      - name: feedSortAt
+        label: Homepage order override (optional)
+        type: string
+        description: "ISO date-time. Leave blank for normal original publication order."
         required: true
       - name: category
         label: Entry type
@@ -302,6 +319,14 @@ content:
       - name: date
         label: Date Added (optional, newest first)
         type: date
+      - name: publishedAt
+        label: First published (automatically recorded)
+        type: string
+        readonly: true
+      - name: feedSortAt
+        label: Homepage order override (optional)
+        type: string
+        description: "ISO date-time. Leave blank for normal original publication order."
       - name: role
         label: Your Role (optional)
         type: string
