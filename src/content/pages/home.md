@@ -10,13 +10,14 @@ currentlyWatching: The Sopranos
 currentlyReading: JoJolion
 currentlyListening: DELTARUNE Piano Collections, Volume 2
 currentlyWatchingCover: /images/currently/watching.jpg
+currentlyReadingCover: /images/400px-volume118.jpg
+currentlyListeningCover: /images/currently/listening.jpg
 currentlyWatchingType: TV
 currentlyReadingAuthor: Hirohiko Araki
-currentlyReadingVolume: 10
+currentlyReadingVolume: 14
 currentlyListeningArtist: Toby Fox, Trevor Alan Gomes
 currentlyWatchingAutoArtwork: true
 currentlyReadingAutoArtwork: true
 currentlyListeningAutoArtwork: true
 currentlyPlayingAutoArtwork: true
-currentlyListeningCover: "/images/currently/listening.jpg"
 ---
