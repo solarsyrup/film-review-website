@@ -2,6 +2,8 @@
 title: Wisdom
 slug: wisdom
 date: 2026-11-07
+publishedAt: '2026-11-08T04:48:29Z'
+feedSortAt: '2026-11-08T04:59:20Z'
 publishedAt: '2026-11-07T23:48:29-05:00'
 category: Observation
 ---
