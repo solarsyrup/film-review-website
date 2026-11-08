@@ -1,0 +1,44 @@
+name: Record first publication times
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/content/reviews/**"
+      - "src/content/diary/**"
+      - "src/content/commonplace/**"
+      - "src/content/projects/**"
+      - "scripts/stamp_publication_times.py"
+      - ".github/workflows/stamp-publication-times.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stamp-publication-main
+  cancel-in-progress: false
+
+jobs:
+  stamp-first-published:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out complete history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Fill missing first publication times from history
+        run: python3 scripts/stamp_publication_times.py
+      - name: Save timestamp metadata
+        run: |
+          git add -- src/content/reviews src/content/diary src/content/commonplace src/content/projects
+          if git diff --staged --quiet; then
+            echo "Every entry already has its first publication time."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Record original publication times for new entries"
+          git pull --rebase origin main
+          git push origin HEAD:main
