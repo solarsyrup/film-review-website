@@ -1,0 +1,15 @@
+---
+title: The Truman Show
+slug: the-truman-show
+medium: Film
+date: 2026-10-28
+year: 1998
+creator: Peter Weir
+rating: 4
+favorite: false
+note: It was nice to rewatch this after a few years in my AP Seminar class. It's
+  just as good as ever and I even picked up on a few more minute details. It
+  really is thought-provoking and brings up many debates on reality, perception,
+  security and freedom, and free will v. determinism.
+autoPoster: true
+---
