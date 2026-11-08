@@ -23,7 +23,7 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
   <article class="shell">
     <div class:list={["article-head", { "article-head-with-poster": Boolean(review.data.cover) }]}>
       <div class="review-head-copy">
-        <a class="back-link" href="/">← Back to journal</a>
+        <a class="back-link" href="/journal/">← Back to journal</a>
         <div class="eyebrow" style="margin-top:34px">{review.data.medium || "Film"} review</div>
         <h1>{review.data.title}</h1>
         <div class="review-meta">{[review.data.year, review.data.director && `${review.data.medium === "TV" ? "Created by" : "Directed by"} ${review.data.director}`, dateLabel && `Reviewed ${dateLabel}`].filter(Boolean).join(" · ")}</div>
@@ -44,7 +44,7 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
     )}
     <Engagement kind="review" slug={review.data.slug || review.id} />
     <hr class="rule" />
-    <a class="back-link" href="/">← More writing</a>
+    <a class="back-link" href="/journal/">← More writing</a>
   </article>
 </BaseLayout>
 <style>
