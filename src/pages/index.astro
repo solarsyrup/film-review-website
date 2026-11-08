@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import StarRating from "../components/StarRating.astro";
 import { getCollection, render } from "astro:content";
 
 const [reviews, diary, commonplace, projects, pages] = await Promise.all([
@@ -15,9 +16,9 @@ const clean=(body:string)=>body
  .replace(/\[([^\]]+)\]\([^)]+\)/g,"$1")
  .replace(/[*_~`>#]/g,"")
  .replace(/\s+/g," ").trim();
-type Entry={type:"Journal"|"Diary"|"Commonplace"|"Portfolio";title:string;date:number;url:string;excerpt:string;image?:string;medium?:string};
+type Entry={type:"Journal"|"Diary"|"Commonplace"|"Portfolio";title:string;date:number;url:string;excerpt:string;image?:string;medium?:string;director?:string;year?:number;rating?:number};
 const entries:Entry[]=[
- ...reviews.map(r=>({type:"Journal" as const,title:r.data.title,date:r.data.date?.getTime()??0,url:`/reviews/${r.data.slug||r.id}/`,excerpt:clean(r.body||"")||r.data.summary||"",image:r.data.cover,medium:r.data.medium||"Film"})),
+ ...reviews.map(r=>({type:"Journal" as const,title:r.data.title,date:r.data.date?.getTime()??0,url:`/reviews/${r.data.slug||r.id}/`,excerpt:"",image:r.data.cover,medium:r.data.medium||"Film",director:r.data.director,year:r.data.year,rating:r.data.rating})),
  ...diary.map(d=>({type:"Diary" as const,title:d.data.title,date:d.data.date.getTime(),url:`/diary/#${d.data.slug||d.id}`,excerpt:d.data.note||"",image:d.data.cover,medium:d.data.medium})),
  ...commonplace.map(c=>({type:"Commonplace" as const,title:c.data.title||"Untitled thought",date:c.data.date.getTime(),url:`/commonplace/#${c.data.slug||c.id}`,excerpt:clean(c.body||"")||c.data.source||"",medium:c.data.category})),
  ...projects.map(p=>({type:"Portfolio" as const,title:p.data.title,date:p.data.date?.getTime()??(p.data.year?Date.UTC(p.data.year,0,1):0),url:`/portfolio/${p.data.slug||p.id}/`,excerpt:p.data.description||clean(p.body||""),image:p.data.cover||undefined,medium:p.data.category||"Other"}))
@@ -71,7 +72,9 @@ const dateLabel=(time:number)=>time?new Date(time).toLocaleDateString("en-US",{m
      <div class="entry-text">
       <div class="review-meta">{entry.type}{entry.medium?` · ${entry.medium}`:""}{entry.date?` · ${dateLabel(entry.date)}`:""}</div>
       <h3>{entry.title}</h3>
-      {entry.excerpt&&<p>{entry.excerpt}</p>}
+      {entry.type==="Journal"&&<div class="review-details review-meta">{[entry.year,entry.director&&`Dir. ${entry.director}`].filter(Boolean).join(" · ")}</div>}
+      {entry.type==="Journal"&&entry.rating!=null&&<div class="home-rating"><StarRating value={entry.rating}/></div>}
+      {entry.type!=="Journal"&&entry.excerpt&&<p>{entry.excerpt}</p>}
       <span class="entry-more">Read entry ↗</span>
      </div>
     </a>)}
@@ -114,6 +117,8 @@ select?.addEventListener("change",()=>{
 .entry-text{min-width:0}
 .entry-text h3{font-size:1.6rem;margin:7px 0 6px}
 .entry-text p{font-size:.88rem;color:var(--body-copy);margin:0 0 9px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.review-details{margin:4px 0 6px}
+.home-rating{color:var(--accent);margin:4px 0 8px;font-size:.8rem}
 .entry-more{font:.67rem "DM Mono",monospace;color:var(--accent)}
 .recent-links{display:flex;flex-wrap:wrap;gap:23px;margin:24px 0}
 .artwork-credit{margin:50px 0 28px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font:.61rem "DM Mono",monospace;line-height:1.7}
