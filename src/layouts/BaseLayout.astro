@@ -55,6 +55,17 @@ const { title = "Journal", description = "A personal film journal." } = Astro.pr
     .brand span { color: var(--accent); }
     .nav-side { display: flex; align-items: center; justify-content:flex-end; gap: 17px; flex: 1; }
     nav { display: flex; flex-wrap: wrap; gap: 9px 16px; font: .65rem "DM Mono", monospace; color: var(--muted); text-transform: uppercase; letter-spacing: .045em; }
+    .more-menu { position:relative; }
+    .more-menu summary { cursor:pointer;list-style:none;user-select:none; }
+    .more-menu summary::-webkit-details-marker { display:none; }
+    .more-menu summary::after { content:" ▾";font-size:.7em; }
+    .more-links { position:absolute;right:0;top:calc(100% + 12px);z-index:10;display:grid;gap:13px;min-width:155px;padding:17px;background:var(--surface);border:1px solid var(--line);box-shadow:0 10px 28px #0003; }
+    .nav-search { display:flex;align-items:center;gap:7px;position:relative; }
+    .nav-search button { border:0;background:transparent;color:var(--muted);cursor:pointer;padding:2px;display:grid;place-items:center; }
+    .nav-search button:hover { color:var(--accent); }
+    .nav-search input { width:0;min-width:0;opacity:0;padding:0;border:0;background:var(--surface);color:var(--text);font:.78rem "DM Sans",sans-serif;transition:width .2s,opacity .2s,padding .2s; }
+    .nav-search.expanded input { width:148px;opacity:1;padding:7px 9px;border:1px solid var(--line); }
+    .nav-search button:focus-visible,.more-menu summary:focus-visible { outline:2px solid var(--accent);outline-offset:4px; }
     .theme-toggle { border: 1px solid var(--line); background: transparent; color: var(--text); border-radius: 2px; padding: 7px 10px; cursor: pointer; font: .68rem "DM Mono", monospace; white-space: nowrap; }
     .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
     .theme-toggle:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
@@ -113,13 +124,55 @@ const { title = "Journal", description = "A personal film journal." } = Astro.pr
     <div class="shell topbar">
       <a class="brand" href="/">After the <span>Credits.</span></a>
       <div class="nav-side">
-        <nav aria-label="Main navigation"><a href="/">Journal</a><a href="/archive/">Archive</a><a href="/diary/">Diary</a><a href="/portfolio/">Portfolio</a><a href="/guestbook/">Guestbook</a><a href="/about/">About</a><a href="/search/" aria-label="Search the site">Search</a><a href="/random/" aria-label="Open a random entry">↝ Random</a></nav>
+        <nav aria-label="Main navigation">
+          <a href="/">Journal</a>
+          <a href="/film-shelf/">Film Shelf</a>
+          <a href="/diary/">Diary</a>
+          <a href="/commonplace/">Commonplace</a>
+          <details class="more-menu" id="more-menu">
+            <summary>More</summary>
+            <div class="more-links">
+              <a href="/portfolio/">Portfolio</a>
+              <a href="/archive/">Archive</a>
+              <a href="/guestbook/">Guestbook</a>
+              <a href="/about/">About</a>
+              <a href="/random/">↝ Random</a>
+            </div>
+          </details>
+          <form class="nav-search" id="nav-search" action="/search/" method="get" role="search">
+            <button type="button" id="nav-search-toggle" aria-label="Expand search" aria-expanded="false" title="Search">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
+            </button>
+            <input id="nav-search-input" name="q" type="search" placeholder="Search…" aria-label="Search site" tabindex="-1" autocomplete="off"/>
+          </form>
+        </nav>
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme">Light mode</button>
       </div>
     </div>
   </header>
   <main><slot /></main>
   <footer class="shell"><span>AFTER THE CREDITS · A FILM JOURNAL</span><span>Made for the love of looking closer.</span></footer>
+  <script is:inline>
+    (() => {
+      const wrap=document.getElementById("nav-search");
+      const toggle=document.getElementById("nav-search-toggle");
+      const input=document.getElementById("nav-search-input");
+      if(!wrap||!toggle||!input)return;
+      const setOpen=(open)=>{
+        wrap.classList.toggle("expanded",open);
+        toggle.setAttribute("aria-expanded",String(open));
+        toggle.setAttribute("aria-label",open?"Close search":"Expand search");
+        input.tabIndex=open?0:-1;
+        if(open)input.focus();
+        else input.value="";
+      };
+      toggle.addEventListener("click",()=>setOpen(!wrap.classList.contains("expanded")));
+      input.addEventListener("keydown",e=>{if(e.key==="Escape"){e.preventDefault();setOpen(false);toggle.focus();}});
+      document.addEventListener("pointerdown",e=>{if(!wrap.contains(e.target)&&wrap.classList.contains("expanded"))setOpen(false);});
+      const more=document.getElementById("more-menu");
+      document.addEventListener("pointerdown",e=>{if(more?.open&&!more.contains(e.target))more.open=false;});
+    })();
+  </script>
   <script is:inline>
     (() => {
       const root = document.documentElement;
