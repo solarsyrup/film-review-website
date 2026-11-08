@@ -16,13 +16,13 @@ const clean=(body:string)=>body
  .replace(/\[([^\]]+)\]\([^)]+\)/g,"$1")
  .replace(/[*_~`>#]/g,"")
  .replace(/\s+/g," ").trim();
-type Entry={type:"Journal"|"Diary"|"Commonplace"|"Portfolio";title:string;date:number;url:string;excerpt:string;image?:string;medium?:string;director?:string;year?:number;rating?:number};
+type Entry={type:"Journal"|"Diary"|"Commonplace"|"Portfolio";title:string;date:number;sortTime:number;url:string;excerpt:string;image?:string;medium?:string;director?:string;year?:number;rating?:number};
 const entries:Entry[]=[
- ...reviews.map(r=>({type:"Journal" as const,title:r.data.title,date:r.data.date?.getTime()??0,url:`/reviews/${r.data.slug||r.id}/`,excerpt:"",image:r.data.cover,medium:r.data.medium||"Film",director:r.data.director,year:r.data.year,rating:r.data.rating})),
- ...diary.map(d=>({type:"Diary" as const,title:d.data.title,date:d.data.date.getTime(),url:`/diary/#${d.data.slug||d.id}`,excerpt:d.data.note||"",image:d.data.cover,medium:d.data.medium})),
- ...commonplace.map(c=>({type:"Commonplace" as const,title:c.data.title||"Untitled thought",date:c.data.date.getTime(),url:`/commonplace/#${c.data.slug||c.id}`,excerpt:clean(c.body||"")||c.data.source||"",medium:c.data.category})),
- ...projects.map(p=>({type:"Portfolio" as const,title:p.data.title,date:p.data.date?.getTime()??(p.data.year?Date.UTC(p.data.year,0,1):0),url:`/portfolio/${p.data.slug||p.id}/`,excerpt:p.data.description||clean(p.body||""),image:p.data.cover||undefined,medium:p.data.category||"Other"}))
-].sort((a,b)=>b.date-a.date||a.title.localeCompare(b.title)).slice(0,6);
+ ...reviews.map(r=>({type:"Journal" as const,title:r.data.title,date:r.data.date?.getTime()??0,sortTime:r.data.feedSortAt?.getTime()??r.data.publishedAt?.getTime()??r.data.date?.getTime()??0,url:`/reviews/${r.data.slug||r.id}/`,excerpt:"",image:r.data.cover,medium:r.data.medium||"Film",director:r.data.director,year:r.data.year,rating:r.data.rating})),
+ ...diary.map(d=>({type:"Diary" as const,title:d.data.title,date:d.data.date.getTime(),sortTime:d.data.feedSortAt?.getTime()??d.data.publishedAt?.getTime()??d.data.date.getTime(),url:`/diary/#${d.data.slug||d.id}`,excerpt:d.data.note||"",image:d.data.cover,medium:d.data.medium})),
+ ...commonplace.map(c=>({type:"Commonplace" as const,title:c.data.title||"Untitled thought",date:c.data.date.getTime(),sortTime:c.data.feedSortAt?.getTime()??c.data.publishedAt?.getTime()??c.data.date.getTime(),url:`/commonplace/#${c.data.slug||c.id}`,excerpt:clean(c.body||"")||c.data.source||"",medium:c.data.category})),
+ ...projects.map(p=>({type:"Portfolio" as const,title:p.data.title,date:p.data.date?.getTime()??(p.data.year?Date.UTC(p.data.year,0,1):0),sortTime:p.data.feedSortAt?.getTime()??p.data.publishedAt?.getTime()??p.data.date?.getTime()??(p.data.year?Date.UTC(p.data.year,0,1):0),url:`/portfolio/${p.data.slug||p.id}/`,excerpt:p.data.description||clean(p.body||""),image:p.data.cover||undefined,medium:p.data.category||"Other"}))
+].sort((a,b)=>b.sortTime-a.sortTime||b.date-a.date||a.title.localeCompare(b.title)).slice(0,6);
 const dateLabel=(time:number)=>time?new Date(time).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"}):"Undated";
 ---
 <BaseLayout title="Home" description="After the Credits — a journal of art, thoughts and things I've made.">
