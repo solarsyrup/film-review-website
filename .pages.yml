@@ -39,6 +39,10 @@ content:
       - name: rating
         label: Rating (out of 5)
         type: number
+      - name: favorite
+        label: Add to Film Shelf favorites
+        type: boolean
+        default: false
       - name: medium
         label: Medium (optional)
         type: select
@@ -74,6 +78,47 @@ content:
         label: Hidden Spoiler Section (optional)
         type: text
         description: "Any text here is hidden behind a click-to-reveal spoiler button."
+
+  - name: commonplace
+    label: Commonplace Book
+    type: collection
+    path: src/content/commonplace
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    view:
+      fields: [title, category, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title (optional)
+        type: string
+      - name: slug
+        label: URL slug
+        type: string
+        required: true
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      - name: date
+        label: Date
+        type: date
+        required: true
+      - name: category
+        label: Entry type
+        type: select
+        required: true
+        default: Observation
+        options:
+          values: [Observation, Philosophy, Quotation, Other]
+      - name: source
+        label: Source / attribution (optional)
+        type: string
+      - name: body
+        label: Text
+        type: rich-text
+        required: true
 
   - name: homepage
     label: Homepage
@@ -368,6 +413,10 @@ content:
       - name: rating
         label: Rating out of 5 (optional)
         type: number
+      - name: favorite
+        label: Add to Film Shelf favorites
+        type: boolean
+        default: false
       - name: cover
         label: Cover or Poster (optional)
         type: image
