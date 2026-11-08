@@ -94,6 +94,7 @@ const diary = defineCollection({
     date: z.coerce.date(),
     year: z.number().optional(),
     rating: z.number().min(0).max(5).optional(),
+    favorite: z.boolean().optional(),
     creator: z.string().optional(),
     cover: z.string().optional(),
     tmdbId: z.number().optional(),
