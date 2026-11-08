@@ -4,6 +4,7 @@ director: James Watkins
 year: 2026
 slug: clayface-review
 date: 2026-10-24
+publishedAt: '2026-10-24T19:16:30-04:00'
 rating: 4
 medium: Film
 cover: /images/posters/reviews-clayface-review.jpg

@@ -4,6 +4,7 @@ director: Chris Mundy, Damon Lindelof, Tom King
 year: 2026
 slug: lanterns-s1
 date: 2026-11-07
+publishedAt: '2026-11-07T19:52:32-05:00'
 rating: 4.5
 medium: TV
 cover: /images/posters/reviews-lanterns-s1.jpg

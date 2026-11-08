@@ -4,6 +4,7 @@ slug: colonial-boy-mv
 category: Film
 year: 2026
 date: 2026-10-25
+publishedAt: '2026-10-25T20:38:37-04:00'
 role: Director, Composer, Writer, Producer, Singer, Editor
 description: Music Video and Song
 cover: /images/Screenshot from 2026-10-25 20-43-06.png

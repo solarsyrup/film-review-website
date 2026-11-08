@@ -4,6 +4,7 @@ slug: sand-poem
 category: Writing
 year: 2026
 date: 2026-11-01
+publishedAt: '2026-11-01T00:26:07-04:00'
 role: Poet
 ---
 I find myself on the beach on the Atlantic coast

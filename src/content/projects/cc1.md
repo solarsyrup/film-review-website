@@ -4,6 +4,7 @@ slug: cc1
 category: Music
 year: 2025
 date: 2026-10-25
+publishedAt: '2026-10-25T21:11:42-04:00'
 role: Singer
 description: My first Christmas album
 cover: /images/alb.jpg

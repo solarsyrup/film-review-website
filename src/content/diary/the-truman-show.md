@@ -3,6 +3,7 @@ title: The Truman Show
 slug: the-truman-show
 medium: Film
 date: 2026-10-28
+publishedAt: '2026-11-08T00:18:45-05:00'
 year: 1998
 creator: Peter Weir
 rating: 4

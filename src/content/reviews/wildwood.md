@@ -4,6 +4,7 @@ director: Travis Knight
 year: 2026
 slug: wildwood
 date: 2026-10-31
+publishedAt: '2026-10-31T23:16:13-04:00'
 rating: 4.5
 medium: Film
 autoPoster: true

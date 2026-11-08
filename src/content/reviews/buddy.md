@@ -4,6 +4,7 @@ director: Casper Kelly
 year: 2026
 slug: buddy
 date: 2026-10-28
+publishedAt: '2026-10-28T19:45:22-04:00'
 rating: 2.5
 medium: Film
 tmdbId: 1514026

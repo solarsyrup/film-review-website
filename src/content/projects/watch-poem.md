@@ -5,6 +5,7 @@ category: Writing
 poetry: true
 year: 2026
 date: 2026-11-01
+publishedAt: '2026-11-01T00:45:22-04:00'
 role: Poet
 description: Poem
 ---

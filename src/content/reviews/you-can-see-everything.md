@@ -4,6 +4,7 @@ director: Nathan Fielder and Lance Oppenheim
 year: 2026
 slug: you-can-see-everything
 date: 2026-10-25
+publishedAt: '2026-10-25T12:24:02-04:00'
 rating: 4.5
 medium: Film
 cover: /images/posters/reviews-you-can-see-everything.jpg

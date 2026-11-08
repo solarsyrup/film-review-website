@@ -3,6 +3,7 @@ title: Disclosure Day
 slug: disclosure-day
 medium: Film
 date: 2026-11-07
+publishedAt: '2026-11-07T23:14:56-05:00'
 year: 2026
 creator: Steven Spielberg
 rating: 2

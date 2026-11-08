@@ -4,6 +4,7 @@ director: "Bo Burnham "
 year: 2018
 slug: eighth-grade
 date: 2026-11-03
+publishedAt: '2026-11-04T00:34:48-04:00'
 rating: 3.5
 medium: Film
 autoPoster: true
