@@ -429,6 +429,14 @@ content:
         label: Date Experienced
         type: date
         required: true
+      - name: publishedAt
+        label: First published (automatically recorded)
+        type: string
+        readonly: true
+      - name: feedSortAt
+        label: Homepage order override (optional)
+        type: string
+        description: "ISO date-time. Leave blank for normal original publication order."
       - name: year
         label: Release Year (optional)
         type: number
