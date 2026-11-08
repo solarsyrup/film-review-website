@@ -6,16 +6,16 @@ slug: lanterns-s1
 date: 2026-11-07
 rating: 4.5
 medium: TV
-autoPoster: true
 cover: /images/posters/reviews-lanterns-s1.jpg
+autoPoster: true
 ---
-Lanterns (2026)
+# Lanterns (2026)
 
 I just finished watching Lanterns. I know I’m a little late to it, and I wasn’t watching every Sunday when the episodes were coming out, but a friend whom I regularly see movies with introduced me to the show. He told me it was really good, so I gave it a watch, and I gotta say, I loved it.
 
 It took me a while to get through, though, because each episode was upwards of 55 minutes long. I think the finale even reached over an hour. I’m used to shows like Breaking Bad, which have relatively long episodes, but once we get past the hour mark, it’s like, wow, this is practically a movie every episode.
 
-Plot and such
+## Plot and such
 
 The show primarily takes place in Rushville, Nebraska, which I have learned is actually a real town. It follows Green Lanterns Hal Jordan and John Stewart as they investigate a series of mysteries involving the Manhunters on Earth.
 
@@ -25,7 +25,7 @@ The story isn’t exclusively set in Rushville, though. We visit another planet,
 
 There are also several jumps between 2016, when much of the story originally takes place, and 2026, the present day. John has grown a lot as a person since then, and he’s given up his right to be a Green Lantern following the events of 2016, when everything went horribly wrong.
 
-Thoughts
+## Thoughts
 
 I thought the show was great. I’ve seen people online complaining that there weren’t enough Green Lantern constructs, that there weren’t any massive space battles like they were expecting, or that the show was too grounded in reality.
 
