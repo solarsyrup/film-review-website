@@ -7,6 +7,7 @@ date: 2026-11-07
 rating: 4.5
 medium: TV
 autoPoster: true
+cover: /images/posters/reviews-lanterns-s1.jpg
 ---
 Lanterns (2026)
 
