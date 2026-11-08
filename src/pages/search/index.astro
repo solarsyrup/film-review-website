@@ -1,19 +1,20 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-const [reviews,projects,diary]=await Promise.all([getCollection("reviews"),getCollection("projects"),getCollection("diary")]);
+const [reviews,projects,diary,commonplace]=await Promise.all([getCollection("reviews"),getCollection("projects"),getCollection("diary"),getCollection("commonplace")]);
 const entries=[
 ...reviews.map(r=>({type:"Journal",title:r.data.title,description:r.data.summary||"",detail:[r.data.director,r.data.year].filter(Boolean).join(" · "),url:`/reviews/${r.data.slug||r.id}/`})),
 ...projects.map(p=>({type:"Portfolio",title:p.data.title,description:p.data.description||"",detail:[p.data.category,p.data.year].filter(Boolean).join(" · "),url:`/portfolio/${p.data.slug||p.id}/`})),
-...diary.map(d=>({type:"Diary",title:d.data.title,description:d.data.note||"",detail:[d.data.creator,d.data.medium,d.data.year].filter(Boolean).join(" · "),url:`/diary/#${d.data.slug||d.id}`}))
+...diary.map(d=>({type:"Diary",title:d.data.title,description:d.data.note||"",detail:[d.data.creator,d.data.medium,d.data.year].filter(Boolean).join(" · "),url:`/diary/#${d.data.slug||d.id}`})),
+...commonplace.map(n=>({type:"Commonplace",title:n.data.title||"Untitled thought",description:n.data.source||"",detail:n.data.category,url:`/commonplace/#${n.data.slug||n.id}`}))
 ];
 ---
-<BaseLayout title="Search" description="Search After the Credits reviews, diary notes, and projects.">
+<BaseLayout title="Search" description="Search After the Credits reviews, diary notes, commonplace entries and projects.">
 <div class="shell">
  <section class="hero">
   <div class="eyebrow">Find your way around</div>
   <h1>Search.</h1>
-  <p>Look through the journal, portfolio, and diary.</p>
+  <p>Look through the journal, portfolio, diary, and commonplace book.</p>
  </section>
  <div class="find-wrap">
   <label for="find-query">Search the site</label>
