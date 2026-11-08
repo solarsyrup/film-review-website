@@ -9,7 +9,6 @@ const pages = await getCollection("pages");
 const home = pages.find((page) => page.data.slug === "home");
 const homeContent = home ? await render(home) : null;
 const HomeContent = homeContent?.Content;
-const eyebrowParts = (home?.data.eyebrow ?? "Notes on cinema · An independent film journal").split(/(~~[^~]+~~)/g);
 const dateLabel = (date) => date.toLocaleDateString("en-US", {
   month: "short", day: "numeric", year: "numeric", timeZone: "UTC"
 });
@@ -17,7 +16,7 @@ const dateLabel = (date) => date.toLocaleDateString("en-US", {
 <BaseLayout title={home?.data.title ?? "Journal"} description={home?.data.intro ?? "A personal film journal of reviews and reflections."}>
   <div class="shell">
     <section class="hero">
-      <div class="eyebrow">{eyebrowParts.map((part) => part.startsWith("~~") && part.endsWith("~~") ? <del>{part.slice(2, -2)}</del> : part)}</div>
+      <div class="eyebrow">{home?.data.eyebrow ?? "Notes on cinema · An independent film journal"}</div>
       <h1>{home?.data.headline ?? "Films worth thinking about."}</h1>
       <p>{home?.data.intro ?? "A personal journal of movies, images, and ideas that stay with you after the screen goes dark."}</p>
       {HomeContent && <div class="page-copy"><HomeContent /></div>}
