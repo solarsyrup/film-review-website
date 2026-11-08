@@ -12,4 +12,5 @@ note: It was nice to rewatch this after a few years in my AP Seminar class. It's
   really is thought-provoking and brings up many debates on reality, perception,
   security and freedom, and free will v. determinism.
 autoPoster: true
+cover: /images/posters/diary-the-truman-show.jpg
 ---
