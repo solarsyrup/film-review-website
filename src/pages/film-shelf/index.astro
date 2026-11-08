@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StarRating from "../../components/StarRating.astro";
+import { getCollection } from "astro:content";
+
+const [reviews, diary] = await Promise.all([getCollection("reviews"),getCollection("diary")]);
+const films = new Map<string, {
+  title:string; year:number|undefined; rating:number|undefined; cover:string|undefined;
+  url:string; note:string; favorite:boolean; hasReview:boolean; date:number;
+  creator:string; 
+}>();
+const key=(title:string,year:number|undefined)=>title.trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g,"-")+"|"+(year??"");
+for(const d of diary){
+ if(d.data.medium!=="Film")continue;
+ const k=key(d.data.title,d.data.year);
+ const existing=films.get(k);
+ const entry={title:d.data.title,year:d.data.year,rating:d.data.rating,cover:d.data.cover,
+   url:`/diary/#${d.data.slug||d.id}`,note:d.data.note||"",favorite:!!d.data.favorite,hasReview:false,
+   date:d.data.date.getTime(),creator:d.data.creator||""};
+ if(!existing || entry.date>existing.date) films.set(k,{...entry, favorite:entry.favorite||!!existing?.favorite});
+}
+for(const r of reviews){
+ if(r.data.medium && r.data.medium!=="Film")continue;
+ const k=key(r.data.title,r.data.year);
+ const old=films.get(k);
+ films.set(k,{
+  title:r.data.title,year:r.data.year,rating:r.data.rating??old?.rating,
+  cover:r.data.cover||old?.cover,url:`/reviews/${r.data.slug||r.id}/`,
+  note:r.data.summary||old?.note||"",favorite:!!r.data.favorite||!!old?.favorite,
+  hasReview:true,date:Math.max(r.data.date?.getTime()||0,old?.date||0),
+  creator:r.data.director||old?.creator||""
+ });
+}
+const entries=[...films.values()].sort((a,b)=>b.date-a.date||a.title.localeCompare(b.title));
+const favoriteCount=entries.filter(e=>e.favorite).length;
+---
+<BaseLayout title="The Film Shelf" description="A personal shelf of films I've watched and thought about.">
+<div class="shell">
+<section class="hero">
+  <div class="eyebrow">A personal collection</div>
+  <h1>The Film Shelf.</h1>
+  <p>A collection of things I've watched. Some loved, some forgotten, all part of the record.</p>
+</section>
+<div class="shelf-controls">
+ <div class="layout-switch" role="group" aria-label="Shelf display">
+  <button type="button" class="view-button selected" data-view="wall" aria-pressed="true">▦ Poster wall</button>
+  <button type="button" class="view-button" data-view="shelves" aria-pressed="false">▤ DVD shelves</button>
+ </div>
+ <div class="filters">
+  <label class="sr-only" for="film-filter">Filter films</label>
+  <select id="film-filter"><option value="all">All films</option><option value="favorites">Favorites only</option><option value="reviews">With full reviews</option></select>
+  <label class="sr-only" for="film-order">Sort films</label>
+  <select id="film-order"><option value="recent">Recently logged</option><option value="rating">Highest rated</option><option value="title">Title A–Z</option><option value="year">Release year</option></select>
+ </div>
+</div>
+<div class="shelf-grid" id="film-grid">
+ {entries.map((film) => <a class="film-entry" href={film.url} data-favorite={String(film.favorite)} data-review={String(film.hasReview)} data-date={film.date} data-rating={film.rating??-1} data-title={film.title.toLocaleLowerCase()} data-year={film.year??0}>
+  <div class="film-poster">
+   {film.cover ? <img src={film.cover} alt={`Poster for ${film.title}`} loading="lazy" decoding="async" /> :
+    <div class="poster-fallback"><span class="eyebrow">Film</span><strong>{film.title}</strong></div>}
+  </div>
+  <div class="film-label"><h2>{film.title}</h2><p>{film.year??"Year unknown"} {film.favorite?"· ♥":""}</p>{film.rating!=null && <div class="film-rating"><StarRating value={film.rating}/></div>}{film.hasReview&&<span class="review-marker">Full review ↗</span>}</div>
+ </a>)}
+</div>
+<p id="film-count" class="review-meta shelf-count">{entries.length} {entries.length===1?"film":"films"} on the shelf {favoriteCount? `· ${favoriteCount} favorites`:""}</p>
+<p id="film-empty" class="empty" hidden>No films match that filter yet.</p>
+{entries.length===0&&<p class="empty">No films yet. Log a film in the Diary or publish a review and it will appear here automatically.</p>}
+</div>
+</BaseLayout>
+<script>
+const grid=document.getElementById("film-grid");
+const entries=[...document.querySelectorAll<HTMLElement>(".film-entry")];
+const filter=document.getElementById("film-filter") as HTMLSelectElement;
+const order=document.getElementById("film-order") as HTMLSelectElement;
+const counter=document.getElementById("film-count");
+const empty=document.getElementById("film-empty");
+function refresh(){
+ const shown=entries.filter(e=>filter.value==="all"||(filter.value==="favorites"&&e.dataset.favorite==="true")||(filter.value==="reviews"&&e.dataset.review==="true"));
+ shown.sort((a,b)=>order.value==="rating"?Number(b.dataset.rating)-Number(a.dataset.rating):order.value==="title"?(a.dataset.title||"").localeCompare(b.dataset.title||""):order.value==="year"?Number(b.dataset.year)-Number(a.dataset.year):Number(b.dataset.date)-Number(a.dataset.date));
+ grid?.replaceChildren(...shown,...entries.filter(e=>!shown.includes(e)));
+ for(const e of entries)e.hidden=!shown.includes(e);
+ if(counter)counter.textContent=shown.length+" "+(shown.length===1?"film":"films")+" on the shelf";
+ if(empty)empty.hidden=shown.length>0||entries.length===0;
+}
+filter?.addEventListener("change",refresh);order?.addEventListener("change",refresh);
+const viewButtons=[...document.querySelectorAll<HTMLButtonElement>("[data-view]")];
+for(const btn of viewButtons)btn.addEventListener("click",()=>{
+ const selected=btn.dataset.view==="shelves";
+ grid?.classList.toggle("shelves",selected);
+ for(const b of viewButtons){const active=b===btn;b.classList.toggle("selected",active);b.setAttribute("aria-pressed",String(active));}
+ try{localStorage.setItem("atc-film-shelf-view",selected?"shelves":"wall")}catch{}
+});
+try{if(localStorage.getItem("atc-film-shelf-view")==="shelves")viewButtons.find(b=>b.dataset.view==="shelves")?.click()}catch{}
+refresh();
+</script>
+<style>
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.shelf-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;margin-bottom:30px}
+.layout-switch,.filters{display:flex;gap:6px;flex-wrap:wrap}
+.view-button,.filters select{border:1px solid var(--line);background:var(--bg);color:var(--muted);font:.68rem "DM Mono",monospace;padding:10px 12px;cursor:pointer}
+.view-button.selected{border-color:var(--accent);background:var(--surface);color:var(--text)}
+.filters select{background:var(--surface);color:var(--text)}
+.shelf-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px 17px}
+.film-entry{min-width:0;display:block}
+.film-entry[hidden]{display:none}
+.film-poster{aspect-ratio:2/3;border:1px solid var(--line);background:var(--surface);overflow:hidden;transition:transform .2s,box-shadow .2s}
+.film-entry:hover .film-poster{transform:translateY(-3px);box-shadow:0 11px 24px #0005}
+.film-poster img{width:100%;height:100%;display:block;object-fit:cover}
+.poster-fallback{height:100%;padding:14px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(150deg,var(--surface),var(--bg))}
+.poster-fallback strong{font:1.4rem/1.1 "Newsreader",Georgia,serif;overflow-wrap:anywhere}
+.film-label h2{font-size:1.22rem;margin:10px 0 3px;line-height:1.15}
+.film-label p{font:.7rem "DM Mono",monospace;color:var(--muted);margin:0}
+.film-rating{color:var(--accent);font-size:.8rem;margin-top:5px}
+.review-marker{font:.6rem "DM Mono",monospace;color:var(--muted)}
+.shelf-count{margin:28px 0}
+.shelf-grid.shelves{gap:24px 0;row-gap:32px}
+.shelves .film-entry{padding:15px 9px 21px;background:linear-gradient(180deg,var(--surface),var(--bg));border-bottom:10px solid #665449;box-shadow:inset 0 -3px #8b7060}
+.shelves .film-poster{border:5px solid #191816;border-left-width:9px;box-shadow:4px 3px 0 #0006}
+.shelves .film-label h2{font-size:1.02rem}
+:root[data-theme="light"] .shelves .film-entry{border-bottom-color:#b09a84;box-shadow:inset 0 -3px #cab8a5}
+@media(max-width:620px){.shelf-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:410px){.shelf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
