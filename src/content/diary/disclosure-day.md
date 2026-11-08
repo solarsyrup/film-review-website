@@ -10,4 +10,5 @@ note: This will serve as my first diary entry as I don't have much to say about
   it. A big nothing-burger if you will. It's the type of movie that characters
   in a movie watch.
 autoPoster: true
+cover: /images/posters/diary-disclosure-day.jpg
 ---
