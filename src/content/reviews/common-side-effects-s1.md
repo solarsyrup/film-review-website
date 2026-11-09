@@ -10,6 +10,7 @@ rating: 5
 favorite: false
 medium: TV
 autoPoster: true
+cover: /images/posters/reviews-common-side-effects-s1.jpg
 ---
 I’ve just finished my first rewatch of *Common Side Effects*, and it was really good. It was great. It was excellent. It was perfect. I’ll just say it: **it’s perfect.** I know that sounds bold, but you’ll come to understand why I believe that.
 
