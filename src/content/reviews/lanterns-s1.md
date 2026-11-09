@@ -5,7 +5,7 @@ year: 2026
 slug: lanterns-s1
 date: 2026-11-07
 publishedAt: '2026-11-08T00:52:32Z'
-feedSortAt: '2026-11-08T04:59:30Z'
+feedSortAt: '2026-11-07T23:00:00-05:00'
 rating: 4.5
 medium: TV
 cover: /images/posters/reviews-lanterns-s1.jpg
