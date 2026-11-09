@@ -84,7 +84,8 @@
   });
   let taps=0,lastTap=0;
   logo?.addEventListener("click",event=>{
-    if(unlocked)return;
+    // Keep the logo as a normal Home link on other pages.
+    if(unlocked||window.location.pathname!=="/")return;
     event.preventDefault();
     const now=Date.now();
     taps=now-lastTap>3000?1:taps+1;lastTap=now;
