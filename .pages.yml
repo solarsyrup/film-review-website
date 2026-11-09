@@ -44,7 +44,7 @@ content:
         label: Homepage order override (optional)
         type: string
         description: "ISO date-time, e.g. 2026-11-08T04:59:30Z. Leave blank for normal original publication order."
-        required: true
+        required: false
       - name: rating
         label: Rating (out of 5)
         type: number
@@ -121,7 +121,7 @@ content:
         label: Homepage order override (optional)
         type: string
         description: "ISO date-time. Leave blank for normal original publication order."
-        required: true
+        required: false
       - name: category
         label: Entry type
         type: select
