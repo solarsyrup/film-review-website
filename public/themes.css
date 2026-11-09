@@ -1,0 +1,41 @@
+/* After the Credits — appearance palette and settings */
+:root[data-theme="forest"]{color-scheme:dark;--bg:#1c2820;--surface:#26342a;--text:#e1e8d8;--muted:#a1b19b;--line:#405447;--accent:#a9bf86;--body-copy:#c5d2bf}
+:root[data-theme="velvet"]{color-scheme:dark;--bg:#291b27;--surface:#352535;--text:#f1dce5;--muted:#c1a9b7;--line:#5b4356;--accent:#e4a1b5;--body-copy:#e4cfda}
+:root[data-theme="blue"]{color-scheme:dark;--bg:#050814;--surface:#0a1330;--text:#d9e6ff;--muted:#88a3e6;--line:#233a79;--accent:#7196ff;--body-copy:#b8c9ef}
+:root[data-theme="grey"]{color-scheme:dark;--bg:#0b0d10;--surface:#15191d;--text:#edf2f7;--muted:#a8b0b7;--line:#3b444c;--accent:#d8e0e8;--body-copy:#cad3db}
+:root[data-theme="nixie"]{color-scheme:dark;--bg:#120806;--surface:#1f100d;--text:#ffe4d6;--muted:#d6a48b;--line:#5a2b1d;--accent:#ff934f;--body-copy:#eac0a9}
+:root[data-theme="dos"]{color-scheme:dark;--bg:#07110b;--surface:#0c1a12;--text:#9ff7bf;--muted:#63b786;--line:#1f4f36;--accent:#66ff99;--body-copy:#a5dfba}
+:root[data-theme="dos"] .brand,:root[data-theme="dos"] h1{text-shadow:0 0 12px #66ff9966}
+:root[data-theme="dos"] body::after{content:"";pointer-events:none;position:fixed;inset:0;z-index:90;background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,#00000013 4px)}
+:root[data-theme="blue"] h1{text-shadow:0 0 23px #466cff33}
+:root[data-theme="nixie"] h1{text-shadow:0 0 23px #ff6c2733}
+.appearance-button{display:inline-flex;align-items:center;justify-content:center;width:36px;height:40px;background:none;border:1px solid var(--line);border-radius:3px;color:var(--text);cursor:pointer;flex:none}
+.appearance-button:hover{border-color:var(--accent);color:var(--accent)}
+.appearance-button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.appearance-layer[hidden],.appearance-dialog[hidden]{display:none!important}
+.appearance-layer{position:fixed;inset:0;z-index:100;background:#0009}
+.appearance-dialog{position:fixed;z-index:101;top:50%;left:50%;transform:translate(-50%,-50%);width:min(470px,calc(100vw - 30px));max-height:min(85dvh,700px);overflow:auto;overscroll-behavior:contain;background:var(--surface);color:var(--text);border:1px solid var(--line);box-shadow:0 20px 60px #0007;border-radius:6px;padding:22px}
+.appearance-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.appearance-heading h2{font-size:1.9rem;margin:0}
+.appearance-close{border:0;background:none;color:var(--muted);font-size:1.7rem;line-height:1;cursor:pointer;padding:6px}
+.appearance-help{font-size:.87rem;color:var(--body-copy);margin:15px 0}
+.appearance-group-title{font:.68rem "DM Mono",monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:22px 0 11px}
+.appearance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.appearance-choice{color:var(--text);background:transparent;border:1px solid var(--line);border-radius:4px;padding:0;overflow:hidden;text-align:left;cursor:pointer;min-width:0}
+.appearance-choice:hover{border-color:var(--accent)}
+.appearance-choice[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px}
+.appearance-choice:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.appearance-swatch{display:flex;flex-direction:column;justify-content:space-between;height:65px;background:var(--sw-bg);color:var(--sw-text);padding:11px}
+.appearance-swatch-name{font:1.06rem "Newsreader",Georgia,serif}
+.appearance-swatch-line{height:3px;width:62%;background:var(--sw-accent)}
+.appearance-choice-caption{display:flex;justify-content:space-between;gap:5px;padding:9px;font:.72rem "DM Sans",sans-serif}
+.appearance-check{color:var(--accent)}
+.appearance-locked{border:1px dashed var(--line);padding:12px;color:var(--muted);font:.76rem "DM Mono",monospace}
+.appearance-tip{margin:16px 0 0;color:var(--muted);font-size:.73rem}
+.appearance-notice{color:var(--accent);font:.73rem "DM Mono",monospace;min-height:1.2em;margin:14px 0 0}
+@media(max-width:620px){
+ .appearance-dialog{top:auto;bottom:0;left:0;transform:none;width:100%;max-height:88dvh;border-radius:12px 12px 0 0;padding:18px 19px max(22px,env(safe-area-inset-bottom))}
+ .appearance-button{height:38px;width:38px;min-width:38px}
+}
+@media(max-width:350px){.appearance-grid{gap:8px}.appearance-choice-caption{font-size:.67rem}}
+@media(prefers-reduced-motion:reduce){:root[data-theme="dos"] body::after{display:none}}
