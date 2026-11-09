@@ -30,13 +30,13 @@ const dateLabel=(time:number)=>time?new Date(time).toLocaleDateString("en-US",{m
   <section class="hero home-hero">
    <div class="eyebrow">{home?.data.eyebrow??"Notes on cinema · An independent film journal"}</div>
    <h1>After the Credits.</h1>
-   <p>A personal journal of art, thoughts, and things I've made. Mostly films, but never just films.</p>
+   <p>A personal journal of art, thoughts, and things I've made. Mostly films, but not all.</p>
    {HomeContent&&<div class="page-copy"><HomeContent/></div>}
   </section>
   {(home?.data.currentlyWatching||home?.data.currentlyReading||home?.data.currentlyListening||home?.data.currentlyPlaying)&&
   <section class="currently" aria-label="Currently experiencing">
    <h2>Currently experiencing.</h2>
-   <p class="section-intro">A little snapshot of what's occupying my time.</p>
+   <p class="section-intro">Small snapshot of what I've been doing.</p>
    <div class="current-grid">
     {home?.data.currentlyWatching&&<div class="current-item">
      {home.data.currentlyWatchingCover&&<img src={home.data.currentlyWatchingCover} alt={`Poster for ${home.data.currentlyWatching}`} loading="lazy"/>}
