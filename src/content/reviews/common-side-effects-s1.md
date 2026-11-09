@@ -4,6 +4,7 @@ director: Joe Bennett & Steve Hely
 year: 2025
 slug: common-side-effects-s1
 date: 2026-11-08
+publishedAt: '2026-11-08T23:19:50-05:00'
 feedSortAt: blank
 rating: 5
 favorite: false
