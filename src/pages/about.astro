@@ -12,6 +12,28 @@ const AboutContent = aboutContent?.Content;
     <section class="hero">
       <div class="eyebrow">{about?.data.eyebrow ?? "A note from the editor"}</div>
       <h1>{about?.data.headline ?? "About this journal."}</h1>
+      <nav class="social-links" aria-label="Social links and contact">
+        <a href="https://instagram.com/casperschris.mp4" target="_blank" rel="me noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.25"/><circle cx="17.7" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg>
+          <span>Instagram</span>
+        </a>
+        <a href="https://tiktok.com/@chriscaspers34" target="_blank" rel="me noopener noreferrer" aria-label="TikTok" title="TikTok">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M15.1 2.5h3.1c.2 2.4 1.7 3.9 3.8 4.1v3.1a9.6 9.6 0 0 1-3.8-.9v6.6c0 4.2-3.1 7.1-7 7.1a7 7 0 0 1-7.1-7.1 7.1 7.1 0 0 1 8.9-6.8v3.4a3.6 3.6 0 1 0 2.1 3.3V2.5Z"/></svg>
+          <span>TikTok</span>
+        </a>
+        <a href="https://x.com/solarsyrup7" target="_blank" rel="me noopener noreferrer" aria-label="X" title="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M18.6 2H22l-7.5 8.6L23.3 22h-6.9L11 15l-6.1 7H1.5l8.1-9.4L1.1 2h7.1l4.9 6.5L18.6 2Zm-1.2 18h1.9L7.1 3.9H5.1L17.4 20Z"/></svg>
+          <span>X</span>
+        </a>
+        <a href="https://letterboxd.com/chriscaspers/" target="_blank" rel="me noopener noreferrer" aria-label="Letterboxd" title="Letterboxd">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.2" cy="12" r="4.2" fill="#ff8000"/><circle cx="12" cy="12" r="4.2" fill="#00e054"/><circle cx="18.8" cy="12" r="4.2" fill="#40bcf4"/><path d="M8 8.9a4.2 4.2 0 0 1 0 6.2 4.2 4.2 0 0 1 0-6.2Z" fill="#ffb200"/><path d="M16 8.9a4.2 4.2 0 0 0 0 6.2 4.2 4.2 0 0 0 0-6.2Z" fill="#00b4a8"/></svg>
+          <span>Letterboxd</span>
+        </a>
+        <a href="mailto:chris21caspers@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4.5" width="20" height="15" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+          <span>Email</span>
+        </a>
+      </nav>
       <p>{about?.data.intro ?? "A personal place to write about films with patience and curiosity."}</p>
     </section>
     {AboutContent && <div class="page-copy"><AboutContent /></div>}
@@ -25,6 +47,11 @@ const AboutContent = aboutContent?.Content;
   </article>
 </BaseLayout>
 <style>
+.social-links{display:flex;flex-wrap:wrap;align-items:center;gap:10px 17px;margin:17px 0 20px}
+.social-links a{display:inline-flex;align-items:center;gap:7px;font:.72rem "DM Mono",monospace;color:var(--muted);text-decoration:none;white-space:nowrap}
+.social-links a:hover,.social-links a:focus-visible{color:var(--accent)}
+.social-links svg{height:17px;width:17px;flex:none}
+@media(max-width:500px){.social-links{gap:12px 15px}.social-links a{font-size:.69rem}}
 .tmdb-credit{max-width:690px;border-top:1px solid var(--line);margin:55px 0 30px;padding-top:22px;display:flex;align-items:center;gap:20px}
 .tmdb-credit img{width:108px;height:auto;max-height:44px;object-fit:contain}
 .tmdb-credit p{font-size:.78rem;color:var(--muted);margin:0}
