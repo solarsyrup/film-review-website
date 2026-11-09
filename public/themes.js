@@ -15,6 +15,18 @@
   const openButton=document.getElementById("appearance-open");
   const closeButton=document.getElementById("appearance-close");
   const notice=document.getElementById("appearance-notice");
+  const effectsToggle=document.getElementById("appearance-effects-toggle");
+  let effectsEnabled=true;
+  try{effectsEnabled=localStorage.getItem("atc-effects")!=="off"}catch(_){}
+  root.dataset.effects=effectsEnabled?"on":"off";
+  if(effectsToggle) {
+    effectsToggle.checked=effectsEnabled;
+    effectsToggle.addEventListener("change",()=>{
+      effectsEnabled=effectsToggle.checked;
+      root.dataset.effects=effectsEnabled?"on":"off";
+      try{localStorage.setItem("atc-effects",effectsEnabled?"on":"off")}catch(_){}
+    });
+  }
   const logo=document.querySelector(".brand");
   if(!dialog||!backdrop||!openButton||!closeButton)return;
   let unlocked=false;
