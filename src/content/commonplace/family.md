@@ -2,6 +2,7 @@
 title: Family
 slug: family
 date: 2026-11-09
+publishedAt: '2026-11-09T21:05:14-05:00'
 category: Observation
 ---
 I think it’s a seriously neglected and overlooked fact that everybody and every single living thing is related.
