@@ -3,6 +3,7 @@ title: Dead Man Walking
 slug: dead-man-walking
 medium: Film
 date: 2026-11-12
+publishedAt: '2026-11-12T21:11:10-05:00'
 year: 1995
 creator: Tim Robbins
 rating: 4
