@@ -11,4 +11,5 @@ favorite: false
 note: Nice to learn of a new film, a good one at that from a class. I thought
   the humanization of a monster in some peoples’ eyes was excellent.
 autoPoster: true
+cover: /images/posters/diary-dead-man-walking.jpg
 ---
