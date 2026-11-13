@@ -2,6 +2,7 @@
 title: Death (Part I)
 slug: death-i
 date: 2026-11-12
+publishedAt: '2026-11-12T21:24:20-05:00'
 category: Observation
 ---
 I went to a funeral today. It’s the first one I’ve been to as a fully conscious person. I went to my great-grandfather’s when I was nine, but I don’t remember enough to say I was conscious. I do remember playing Subway Surfers with my cousins while the cadaver of our great-grandfather, who lived in Poland through World War II, lied in the front.
