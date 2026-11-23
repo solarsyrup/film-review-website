@@ -10,14 +10,18 @@ favorite: false
 medium: Film
 cover: /images/posters/reviews-baby-driver.jpg
 autoPoster: true
+videoFile: /uploads/ssstikio1795409501720.mp4
+videoCaption: Video from @galaperformanceuk on TikTok
 ---
 Last night, or technically early this morning, I watched *Baby Driver*. I’d heard of it before, but what actually convinced me to watch it was, of all things, my physics class.
+
+
 
 A couple of weeks ago, *Baby Driver* came up in one of our physics problems. We were learning about circular and centripetal motion, and my teacher showed us a clip from the laundromat scene to demonstrate it. I thought it looked good, and I figured, well shit, if my physics teacher who I respect very much likes it, maybe I will too.
 
 I had also seen the clip of the character Doc saying "Bananas" in a few niche GifToks before.
 
-
+[[video]]
 
 So I finally watched it, and it was really, really, really good. I only have a few very minor complaints.
 
