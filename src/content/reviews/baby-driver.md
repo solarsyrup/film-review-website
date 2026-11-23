@@ -4,6 +4,7 @@ director: Edgar Wright
 year: 2017
 slug: baby-driver
 date: 2026-11-22
+publishedAt: '2026-11-22T23:38:47-05:00'
 rating: 5
 favorite: false
 medium: Film
