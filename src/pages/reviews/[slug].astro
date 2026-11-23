@@ -35,6 +35,16 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
     <hr class="rule" style="margin-top:0" />
     <div class="article-body">
       <Content />
+      {review.data.videoFile && (
+        <figure class="review-video" id="review-video">
+          <video controls preload="metadata" playsinline aria-label={`Video clip for ${review.data.title}`}>
+            <source src={review.data.videoFile} type={review.data.videoFile.toLowerCase().split("?")[0].endsWith(".webm") ? "video/webm" : "video/mp4"} />
+            Your browser does not support inline video playback.
+            <a href={review.data.videoFile}>Download or open the video clip</a>.
+          </video>
+          {review.data.videoCaption && <figcaption>{review.data.videoCaption}</figcaption>}
+        </figure>
+      )}
     </div>
     {review.data.spoilerText && (
       <details class="spoiler-section">
@@ -47,7 +57,24 @@ const dateLabel = review.data.date?.toLocaleDateString("en-US", {
     <a class="back-link" href="/journal/">← More writing</a>
   </article>
 </BaseLayout>
+<script is:inline>
+  (() => {
+    // An optional [[video]] paragraph lets an uploaded clip appear within the review.
+    // Without a marker the clip remains at the end of the article body.
+    const figure = document.getElementById("review-video");
+    const body = document.querySelector(".article-body");
+    if (!figure || !body) return;
+    const marker = Array.from(body.querySelectorAll("p")).find(
+      (paragraph) => paragraph.textContent?.trim() === "[[video]]"
+    );
+    if (marker) marker.replaceWith(figure);
+  })();
+</script>
+
 <style>
+.review-video{margin:26px 0 34px;max-width:100%;overflow:hidden}
+.review-video video{display:block;width:100%;max-width:100%;height:auto;background:#000;border:1px solid var(--line);border-radius:3px}
+.review-video figcaption{margin-top:8px;font:.74rem "DM Mono",monospace;color:var(--muted);line-height:1.5}
 .spoiler-section{max-width:690px;margin:24px 0;padding:13px 17px;background:var(--surface);border:1px solid var(--line)}
 .spoiler-section summary{color:var(--accent);cursor:pointer;font:.75rem "DM Mono",monospace;letter-spacing:.04em}
 .spoiler-copy{padding-top:15px;white-space:pre-wrap;color:var(--body-copy);font-size:1rem;line-height:1.72;overflow-wrap:anywhere}
