@@ -18,6 +18,8 @@ const reviews = defineCollection({
     cover: z.string().optional(),
     tmdbId: z.number().optional(),
     autoPoster: z.boolean().optional(),
+    videoFile: z.string().optional(),
+    videoCaption: z.string().optional(),
     spoilerHeading: z.string().optional(),
     spoilerText: z.string().optional(),
   }),
