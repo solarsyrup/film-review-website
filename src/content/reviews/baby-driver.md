@@ -4,12 +4,12 @@ director: Edgar Wright
 year: 2017
 slug: baby-driver
 date: 2026-11-22
-publishedAt: '2026-11-22T23:38:47-05:00'
+publishedAt: 2026-11-22T23:38:47-05:00
 rating: 5
 favorite: false
 medium: Film
-autoPoster: true
 cover: /images/posters/reviews-baby-driver.jpg
+autoPoster: true
 ---
 Last night, or technically early this morning, I watched *Baby Driver*. I’d heard of it before, but what actually convinced me to watch it was, of all things, my physics class.
 
@@ -37,7 +37,7 @@ I thought the characters were great. I particularly liked Doc, and I also really
 
 Another little detail I loved was Baby’s hobby of making music out of recordings of people’s voices. Everyone was skeptical that he actually did that, rather than just recording their conversations for each heist. I thought it was such a fun and interesting part of his character.
 
-Baby's tinnitus was an interesting plot device; it bundles making the background music diegetic and incorporating his parents' death and love of music all into one is an amazing choice. I loved the representation of it and how you can hear it when one or both of his earbuds are out. The music's synchronization with things like driving,  
+Baby's tinnitus was an interesting plot device; it bundles making the background music diegetic and incorporating his parents' death and love of music all into one is an amazing choice. I loved the representation of it and how you can hear it when one or both of his earbuds are out. The music's synchronization with things like driving, stacking money, and gunshots was a neat plus of this.
 
 I’ve heard some complaints about the acting, but I personally didn’t have a problem with it. I thought the performances were very good.
 
