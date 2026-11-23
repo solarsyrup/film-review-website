@@ -182,6 +182,11 @@ content:
         label: Closing Note
         type: text
         description: "The sentence below the reviews."
+      - name: todaysPhrase
+        label: Today's Phrase
+        type: string
+        description: "The phrase currently on your mind. Leave blank to hide the section."
+        required: false
       - name: currentlyWatching
         label: Currently Watching (optional)
         type: string
