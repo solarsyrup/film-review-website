@@ -8,6 +8,7 @@ publishedAt: '2026-11-22T23:56:39-05:00'
 rating: 3
 favorite: false
 autoPoster: true
+cover: /images/posters/reviews-21-jump-street.jpg
 ---
 # 21 Jump Street (2012)
 
