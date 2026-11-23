@@ -39,7 +39,7 @@ const dateLabel=(time:number)=>time?new Date(time).toLocaleDateString("en-US",{m
     <p class="todays-phrase-value">{home.data.todaysPhrase}</p>
     <p class="section-intro todays-phrase-note">*Not actually updated daily but does reflect a short phrase or mantra I'm currently thinking about.</p>
     {home.data.todaysPhraseUpdatedAt && (
-     <p class="todays-phrase-updated">Last updated: <time datetime={home.data.todaysPhraseUpdatedAt.toISOString()}>{home.data.todaysPhraseUpdatedAt.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric",timeZone:"America/New_York"})}</time></p>
+     <p class="todays-phrase-updated">Last updated - <time datetime={home.data.todaysPhraseUpdatedAt.toISOString()}>{home.data.todaysPhraseUpdatedAt.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"America/New_York"}).replace(/^([A-Za-z]{3}) /, "$1. ")}</time></p>
     )}
    </section>
   )}
