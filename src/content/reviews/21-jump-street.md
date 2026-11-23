@@ -4,6 +4,7 @@ director: Phil Lord and Christopher Miller
 year: 2012
 slug: 21-jump-street
 date: 2026-11-22
+publishedAt: '2026-11-22T23:56:39-05:00'
 rating: 3
 favorite: false
 autoPoster: true
