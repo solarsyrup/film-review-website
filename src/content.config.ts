@@ -48,6 +48,7 @@ const pages = defineCollection({
     intro: z.string().optional(),
     sectionHeading: z.string().optional(),
     closingNote: z.string().optional(),
+    todaysPhrase: z.string().optional(),
     currentlyWatching: z.string().optional(),
     currentlyReading: z.string().optional(),
     currentlyListening: z.string().optional(),
