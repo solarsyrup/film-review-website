@@ -9,6 +9,7 @@ rating: 5
 favorite: false
 medium: Film
 autoPoster: true
+cover: /images/posters/reviews-baby-driver.jpg
 ---
 Last night, or technically early this morning, I watched *Baby Driver*. I’d heard of it before, but what actually convinced me to watch it was, of all things, my physics class.
 
