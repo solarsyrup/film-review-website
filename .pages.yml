@@ -79,6 +79,18 @@ content:
         label: Review Text
         type: rich-text
         description: "Write only your review here. The title, director, date and rating are displayed separately above it."
+      - name: videoFile
+        label: Review video clip (optional, MP4/WebM)
+        type: file
+        description: "Upload a short MP4 or WebM clip. Add [[video]] on its own line in Review Text where you want the player; otherwise it appears after the review."
+        options:
+          media: portfolio_files
+          categories: [video]
+          rename: safe
+      - name: videoCaption
+        label: Video caption (optional)
+        type: string
+        description: "Displayed below the uploaded video clip."
       - name: spoilerHeading
         label: Spoiler Button Text (optional)
         type: string
