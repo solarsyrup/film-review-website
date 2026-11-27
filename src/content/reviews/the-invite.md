@@ -4,6 +4,7 @@ director: Olivia Wilde
 year: 2026
 slug: the-invite
 date: 2026-11-27
+publishedAt: '2026-11-27T03:29:31-05:00'
 rating: 4
 favorite: false
 medium: Film
