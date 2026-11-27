@@ -9,6 +9,7 @@ rating: 4
 favorite: false
 medium: Film
 autoPoster: true
+cover: /images/posters/reviews-the-invite.jpg
 ---
 I just finished watching *The Invite*, and I thought it was good. I found its premise genuinely interesting and pretty refreshing: a small cast of characters, a single location, and an entire story unfolding over the course of one evening. It’s a simple setup, but I think the film makes very good use of it.
 
